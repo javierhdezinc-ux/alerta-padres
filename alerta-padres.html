@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#1A56A0"/>
+<title>Alerta — Apoyo para padres</title>
+<style>
+:root{--bg:#F7F9FC;--card:#fff;--p:#1A56A0;--g:#276749;--r:#C53030;--y:#B7791F;--t:#1A202C;--m:#4A5568;--b:#CBD5E0}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;background:#0F172A;color:var(--t)}
+.app{max-width:390px;margin:0 auto;min-height:100dvh;background:var(--bg);display:flex;flex-direction:column}
+header{padding:16px 16px 8px}header h1{margin:0;font-size:1.45rem}header p{margin:4px 0 0;color:var(--m);font-size:.92rem}
+main{flex:1;padding:8px 16px 96px}
+.card{background:var(--card);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 4px 20px rgba(0,0,0,.06)}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:14px;font-weight:700;font-size:1rem;margin-top:8px;cursor:pointer}
+.p{background:var(--p);color:#fff}.g{background:var(--g);color:#fff}.r{background:var(--r);color:#fff}.o{background:#fff;border:2px solid var(--b);color:var(--t)}
+.item{display:flex;gap:12px;align-items:center;padding:12px;background:#fff;border-radius:14px;margin-bottom:8px;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+.ic{width:44px;height:44px;border-radius:12px;background:#EBF8FF;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.muted{color:var(--m);font-size:.9rem;line-height:1.45}
+.nav{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--b);display:grid;grid-template-columns:1fr 1fr 1fr 1fr;padding:8px 4px calc(8px + env(safe-area-inset-bottom))}
+.nav button{background:0;border:0;color:var(--m);font-size:.72rem;font-weight:600}
+.nav button.on{color:var(--p)}
+.script{background:#F0FFF4;border-left:4px solid var(--g);padding:12px;border-radius:0 12px 12px 0;margin:8px 0}
+.chk{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--b)}
+a{color:var(--p)}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <h1 id="t">Alerta</h1>
+  <p id="s">Apoyo para padres. No diagnostica. No reemplaza al profesional.</p>
+</header>
+<main id="v"></main>
+<nav class="nav">
+  <button class="on" id="n-hoy" onclick="go('hoy')">Hoy</button>
+  <button id="n-temas" onclick="go('temas')">Temas</button>
+  <button id="n-plan" onclick="go('plan')">Plan</button>
+  <button id="n-ayuda" onclick="go('ayuda')">Ayuda</button>
+</nav>
+</div>
+<script>
+var ALMA='https://usalma.app/secretaria-demo.html?from=alerta-padres';
+var TOPICS={
+  ansiedad:{n:'Ansiedad',q:'¿Cómo ayudo si mi hijo está muy nervioso?'},
+  bullying:{n:'Bullying',q:'¿Qué hago si lo están molestando en la escuela?'},
+  ciber:{n:'Ciberbullying',q:'¿Qué hago si lo atacan en el celular?'},
+  adicciones:{n:'Adicciones',q:'¿Cómo hablo de sustancias sin asustar?'},
+  emociones:{n:'Emociones',q:'¿Cómo le ayudo a ponerle nombre a lo que siente?'},
+  comunicacion:{n:'Comunicación',q:'¿Cómo hablo sin que se cierre?'}
+};
+function go(tab){
+  ['hoy','temas','plan','ayuda'].forEach(function(k){document.getElementById('n-'+k).className=k===tab?'on':'';});
+  if(tab==='hoy')hoy();
+  if(tab==='temas')temas();
+  if(tab==='plan')plan();
+  if(tab==='ayuda')ayuda();
+}
+function hoy(){
+  document.getElementById('t').textContent='Alerta';
+  document.getElementById('s').textContent='Un paso hoy. Emergencia siempre gratis.';
+  document.getElementById('v').innerHTML=
+    '<div class="card"><button class="btn r" onclick="go(\'ayuda\')">Necesito ayuda ya</button>'+
+    '<a class="btn g" href="'+ALMA+'" style="text-align:center;text-decoration:none">Consejo de un profesional</a></div>'+
+    '<div class="card"><p class="muted">Esto no es terapia. Son planes para padres. Si hay riesgo de vida, marque 911 o 988.</p>'+
+    '<button class="btn o" onclick="go(\'temas\')">Ver temas</button></div>';
+}
+function temas(){
+  document.getElementById('t').textContent='Temas';
+  document.getElementById('s').textContent='Elija uno. Luego un plan de 3 pasos.';
+  var h='';
+  Object.keys(TOPICS).forEach(function(k){
+    var x=TOPICS[k];
+    h+='<div class="item" onclick="abrir(\''+k+'\')"><div class="ic">•</div><div><strong>'+x.n+'</strong><div class="muted">'+x.q+'</div></div></div>';
+  });
+  document.getElementById('v').innerHTML=h;
+}
+function abrir(k){
+  localStorage.setItem('alerta_tema',k);
+  var x=TOPICS[k];
+  document.getElementById('t').textContent=x.n;
+  document.getElementById('s').textContent='Guion para hablar. Usted decide.';
+  var scripts={
+    ansiedad:'“Te veo tenso. No tienes que resolverlo solo. ¿Quieres que nos sentemos diez minutos?”',
+    bullying:'“Si alguien te está haciendo daño, no es un secreto que debas guardar. Estoy de tu lado.”',
+    ciber:'“Si te mandaron algo cruel, no respondas ahora. Enséñame la pantalla. Lo vemos juntos.”',
+    adicciones:'“Quiero que sepas que puedes hablarme de esto sin que te grite. Prefiero la verdad a la sorpresa.”',
+    emociones:'“No está mal enojarse. Está mal hacerse daño. Ponle nombre: ¿enojo, miedo o tristeza?”',
+    comunicacion:'“No te voy a interrumpir. Cuéntame desde el principio. Luego te digo lo que entendí.”'
+  };
+  document.getElementById('v').innerHTML=
+    '<div class="card"><h3 style="margin:0 0 8px">Qué no es</h3><p class="muted">No es diagnóstico. No es que “ya tiene adicción”. Es una conversación de casa.</p></div>'+
+    '<div class="card"><h3 style="margin:0 0 8px">Qué decir</h3><div class="script">'+scripts[k]+'</div>'+
+    '<button class="btn p" onclick="activar(\''+k+'\')">Activar plan de 3 pasos</button>'+
+    '<a class="btn g" href="'+ALMA+'" style="text-align:center;text-decoration:none;margin-top:8px">Consejo de un profesional</a></div>';
+}
+function activar(k){
+  localStorage.setItem('alerta_plan',k);
+  go('plan');
+}
+function plan(){
+  var k=localStorage.getItem('alerta_plan')||'comunicacion';
+  var x=TOPICS[k];
+  document.getElementById('t').textContent='Plan';
+  document.getElementById('s').textContent=x.n+' · tres pasos';
+  var steps=[
+    'Hoy: una conversación de 10 minutos, sin celular.',
+    'Mañana: avisar a un adulto de confianza en la escuela si aplica.',
+    'Esta semana: si no baja, abrir Consejo de un profesional (Alma).'
+  ];
+  var h='<div class="card">';
+  steps.forEach(function(s,i){
+    var id='p'+i;
+    var on=localStorage.getItem(id)==='1';
+    h+='<div class="chk"><div class="btn o" style="width:28px;padding:4px;margin:0" onclick="tick(\''+id+'\')">'+ (on?'✓':'') +'</div><div>'+s+'</div></div>';
+  });
+  h+='</div><div class="card"><p class="muted">Si hay armas, desmayo, “me quiero morir” o violencia: no siga el plan. Marque emergencia.</p></div>';
+  document.getElementById('v').innerHTML=h;
+}
+function tick(id){
+  localStorage.setItem(id, localStorage.getItem(id)==='1'?'0':'1');
+  plan();
+}
+function ayuda(){
+  document.getElementById('t').textContent='Ayuda ya';
+  document.getElementById('s').textContent='Gratis. No pasa por Alma.';
+  document.getElementById('v').innerHTML=
+    '<div class="card"><p class="muted">Si hay peligro ahora:</p>'+
+    '<a class="btn r" href="tel:911" style="text-align:center;text-decoration:none">Llamar 911</a>'+
+    '<a class="btn r" href="tel:988" style="text-align:center;text-decoration:none">Línea 988 (EE.UU.)</a>'+
+    '<p class="muted" style="margin-top:10px">México: también puede marcar emergencias locales o ir a urgencias.</p></div>'+
+    '<div class="card"><p class="muted">Si no es emergencia, un profesional con cédula:</p>'+
+    '<a class="btn g" href="'+ALMA+'" style="text-align:center;text-decoration:none">Consejo de un profesional</a>'+
+    '<p class="muted" style="margin-top:10px">Alma no es esta app. Aquí el padre se organiza. Allá agenda con Laura u otro especialista.</p></div>';
+}
+hoy();
+</script>
+</body>
+</html>
