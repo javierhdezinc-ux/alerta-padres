@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#1A56A0"/>
+<title>Alerta</title>
+<style>
+:root{--bg:#F3EEE6;--card:#FFFAF4;--p:#1A56A0;--g:#2F6B45;--r:#B42318;--ink:#1C1917;--m:#57534E;--line:#E7E0D6}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#0B1220;color:var(--ink)}
+.app{max-width:430px;margin:0 auto;min-height:100dvh;background:var(--bg)}
+.cover{position:fixed;inset:0;max-width:430px;margin:auto;z-index:60;display:flex;flex-direction:column;justify-content:flex-end;background:#0B1220}
+.cover .ph{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,18,32,.2),rgba(11,18,32,.92)),#1E3A5F}
+.cover .in{position:relative;padding:28px 20px calc(28px + env(safe-area-inset-bottom))}
+.k{letter-spacing:.22em;font-size:.68rem;color:#E2E8F0}
+.btn{display:block;width:100%;border:0;border-radius:16px;padding:16px;font-size:1.02rem;font-weight:700;margin-top:10px}
+.blue{background:var(--p);color:#fff}.green{background:var(--g);color:#fff}.red{background:var(--r);color:#fff}
+.line{background:#fff;border:2px solid var(--line);color:var(--ink)}
+.ghost{background:0;border:0;color:var(--p);width:100%;padding:12px;text-decoration:underline}
+header{padding:16px 16px 4px}header h1{margin:0;font-size:1.5rem}header p{margin:6px 0 0;color:var(--m);line-height:1.4}
+main{padding:8px 16px 112px}
+.card{background:var(--card);border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:0 8px 20px rgba(28,25,23,.05)}
+.card h3{margin:0 0 8px;font-size:1.08rem}
+.muted{color:var(--m);line-height:1.5;font-size:.95rem}
+.nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:430px;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:8px 2px calc(10px + env(safe-area-inset-bottom));z-index:30}
+.nav button{background:0;border:0;color:#78716C;font-size:.66rem;font-weight:600}
+.nav button.on{color:var(--p)}
+.opt{border:2px solid var(--line);border-radius:14px;padding:13px;margin:8px 0;background:#fff}
+.opt.on{border-color:var(--p);background:#EFF6FF}
+a.btn{text-align:center;text-decoration:none}
+.hide{display:none!important}
+.step{display:flex;gap:10px;margin:10px 0}
+.num{width:28px;height:28px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.grp{margin:18px 4px 8px;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--m);font-weight:700}
+details{background:var(--card);border-radius:16px;padding:12px 16px;margin:12px 0}
+textarea{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);font:inherit}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="cover" id="cover">
+  <div class="ph"></div>
+  <div class="in">
+    <div class="k">ALERTA</div>
+    <p style="color:#fff;font-size:1.55rem;line-height:1.2;margin:10px 0 0">Te dice qué hacer<br/>hoy por tu hijo.</p>
+    <button class="btn blue" onclick="entrar()">Entrar</button>
+  </div>
+</div>
+<header><h1 id="t">Hoy</h1><p id="s">Tres cosas. Esta noche.</p></header>
+<main id="v"></main>
+<nav class="nav">
+  <button class="on" id="n-hoy" onclick="go('hoy')">Hoy</button>
+  <button id="n-pasos" onclick="go('pasos')">3 pasos</button>
+  <button id="n-temas" onclick="go('temas')">Temas</button>
+  <button id="n-mas" onclick="go('mas')">Más</button>
+  <button id="n-crisis" onclick="go('crisis')">Crisis</button>
+</nav>
+</div>
+<script>
+var ALMA='https://usalma.app/';
+var T={comunicacion:{n:'Comunicación',g:'casa'},conducta:{n:'Comportamiento',g:'casa'},bullying:{n:'Bullying',g:'esc'},ciber:{n:'Ciberbullying',g:'esc'},acoso:{n:'Acoso',g:'esc'},ansiedad:{n:'Ansiedad',g:'in'},depresion:{n:'Depresión',g:'in'},adicciones:{n:'Adicciones',g:'in'},codep:{n:'Cuidar de ti',g:'tu'}};
+var C={
+comunicacion:{para:'Reabrir el canal cuando solo hay silencio.',sen:'“No sé”. Se encierra. Evita la mesa. Solo temas vacíos.',hoy:['10 minutos sin pantallas y sin corregir.','Una pregunta abierta.','Si no habla, deja la puerta abierta.'],decir:'“Cuando quieras, estoy disponible sin juzgar.”',no:'Interrogatorio. Sermón. “Siempre igual.”',prev:'Hablar un poco los días buenos.',emo:'Nombra lo que ves. Tu volumen enseña más que el sermón.',flag:'Si hay “nada tiene sentido” o daño, Crisis.'},
+ansiedad:{para:'Cuando la preocupación no baja con lógica.',sen:'No se calma. Dolor de panza o cabeza. Evita escuela o hablar. Revisa si alguien se enojó. Insomnio. Se irrita por poco.',hoy:['10 min sin celular: “¿cómo te sientes de verdad?”','Valida. No discutas el miedo.','Respiración 4-7-8. Quita UNA fuente.'],decir:'“He notado que cargas mucha preocupación. Estoy de tu lado.”',no:'“Cálmate.” “No es para tanto.” Obligar a hablar en el pico.',prev:'Sueño. Límite de redes de noche.',emo:'Cuerpo primero: respirar, agua, caminar 5 minutos.',flag:'Pánico repetido o rechazo total a la escuela → profesional esta semana.'},
+depresion:{para:'Ver un apagón y acercar ayuda. No “ponerlo positivo”.',sen:'Dejó de disfrutar. Duerme de más o de menos. Se aisla. “Nada tiene sentido.” Cansancio. Bajan calificaciones.',hoy:['Contacto diario sin pedirle ánimo.','10 minutos juntos.','Si hay desesperanza, pregunta por daño y agenda ayuda.'],decir:'“Te veo más apagado y me importa. No estás solo.”',no:'“Ponte positivo.” “Es una etapa.” Dejarlo solo si hay ideas de daño.',prev:'Rutina chica. Un adulto estable.',emo:'Compañía sin exigirle alegría.',flag:'Ideas de morir, plan, autolesión → Crisis ya.'},
+bullying:{para:'Distinguir pelea de acoso que se repite.',sen:'No quiere ir. Moretones o cosas “perdidas”. Cambia después de clases. Se culpa.',hoy:['Escucha sin interrumpir.','Anota fechas, nombres, hechos.','Adulto de la escuela. “Esto no es tu culpa.”'],decir:'“Esto no es tu culpa. Vamos a pedir hechos a la escuela.”',no:'“Ignóralos.” “Pégale.” Confrontar agresores por tu cuenta.',prev:'Un adulto de confianza en el colegio.',emo:'Creer primero. Luego el papel.',flag:'Amenazas graves o ideas de daño → dirección y si aplica autoridades.'},
+ciber:{para:'Acoso en el teléfono. Documentar sin castigar primero.',sen:'Miedo al celular. Borra cuentas. No puede dejar de revisar. “Me están exponiendo.”',hoy:['Revisen juntos.','Capturas. Reportar y bloquear.','Informar a la escuela con evidencia.'],decir:'“No respondas ahora. Enséñame la pantalla.”',no:'Quitar el celular como primer castigo. “Es solo internet.”',prev:'Cuentas privadas. Nada íntimo por chat.',emo:'Primero seguridad, después el límite.',flag:'Amenazas o imágenes íntimas: denunciar. No confrontar solo.'},
+adicciones:{para:'Sustancias o pantallas que ya mandan. Es tratable. No es vicio.',sen:'Cambia de amigos. Olores, peso. Mentiras. Falta dinero o pastillas. Pierde escuela. Pelea si se corta el juego. “Ya no me hace el mismo efecto.”',hoy:['10 min desde la preocupación. No digas adicto.','Anota 3 días. Reduce el acceso fácil.','Agenda evaluación. No esperes tocar fondo.'],decir:'“Te quiero. Esto puede ser una enfermedad tratable. No te abandono.”',no:'Humillar. “Es normal.” Esperar fondo. El celular como único tratamiento.',prev:'Hablar antes. Las 3 C: no lo causaste, no lo controlas, no lo curas tú solo.',emo:'Apoyar no es cubrir.',flag:'Intoxicación, desmayo, opioides o inhalantes → urgencias.'},
+acoso:{para:'Proteger y creer. No hacer de detective.',sen:'Miedo a una persona o lugar. Cambia higiene. Evita a alguien. Quejas físicas sin causa clara.',hoy:['“Te creo.”','Corta el contacto con la persona señalada.','Si hay sospecha fundada, rutas oficiales hoy.'],decir:'“Te creo. No fue tu culpa. Voy a protegerte.”',no:'Interrogatorio policial. Pedir pruebas al niño. Confrontar al agresor solo.',prev:'Partes privadas. Derecho a decir no. Un secreto que da miedo no se guarda.',emo:'Creer. Proteger. Después el papeleo.',flag:'Abuso sexual: proteger + autoridades. No confrontar al posible agresor.'},
+conducta:{para:'Un límite sin gritar desde la rabia.',sen:'Ira desproporcionada. Desafía. Agrede. Mentiras. Busca riesgo.',hoy:['UNA regla esta semana.','Una consecuencia que sí cumplas.','Revisa sueño, hambre, pantallas y escuela.'],decir:'“Lo que hiciste no está bien. Tú sí me importas.”',no:'Gritar. Apilar castigos. Comparar hermanos.',prev:'Elogiar lo que sí hace. Regularte tú primero.',emo:'En el pico: espacio. La consecuencia, después.',flag:'Violencia grave, fuga, riesgo a otros → seguridad + profesional.'},
+codep:{para:'Que tú no te apagues. Cuidar no es controlar.',sen:'No duermes de vigilar. Dejas salud. Mientes “para proteger”. Pagas siempre las consecuencias. “Solo yo lo arreglo.”',hoy:['Un límite escrito.','Deja de cubrir una mentira.','5–10 minutos para ti.'],decir:'“Te quiero. No voy a mentir ni a financiar esto. Si quieres ayuda, te acompaño.”',no:'Salvarlo a costa de ti. El hijo aprende que siempre lo cubren.',prev:'3 C: no causaste, no controlas, no curas tú solo.',emo:'Si gritas, enseñas que el poder es el volumen.',flag:'Si no puedes más: Crisis y ayuda para ti.'}
+};
+function st(){try{return JSON.parse(localStorage.getItem('alerta_spec')||'{}')}catch(e){return {}}}
+function sv(d){localStorage.setItem('alerta_spec',JSON.stringify(d))}
+function entrar(){document.getElementById('cover').classList.add('hide'); if(!st().edad) onb(); else go('hoy');}
+function onb(){
+  document.getElementById('t').textContent='Tu hijo';
+  document.getElementById('s').textContent='Dos pasos. Luego, qué hacer hoy.';
+  var h='<div class="card"><h3>¿Qué edad tiene?</h3>';
+  [['6-11','6 a 11'],['12-15','12 a 15'],['15-18','15 a 18'],['18+','18 o más']].forEach(function(x){h+='<div class="opt" onclick="edad(\''+x[0]+'\')">'+x[1]+'</div>';});
+  document.getElementById('v').innerHTML=h+'</div>';
+}
+function edad(e){
+  var d=st(); d.edad=e; d.temas=d.temas||['comunicacion']; sv(d);
+  var h='<div class="card"><h3>¿Qué te preocupa ahora?</h3><p class="muted">Tú activas. Nada se llena solo.</p>';
+  Object.keys(T).forEach(function(k){h+='<div class="opt '+((d.temas||[]).indexOf(k)>=0?'on':'')+'" onclick="tog(\''+k+'\')">'+T[k].n+'</div>';});
+  document.getElementById('v').innerHTML=h+'<button class="btn blue" onclick="go(\'hoy\')">Ver mis 3 de hoy</button></div>';
+}
+function tog(k){var d=st(); d.temas=d.temas||[]; var i=d.temas.indexOf(k); if(i>=0)d.temas.splice(i,1); else d.temas.push(k); if(!d.temas.length)d.temas=['comunicacion']; sv(d); edad(d.edad);}
+function go(tab){['hoy','pasos','temas','mas','crisis'].forEach(function(k){document.getElementById('n-'+k).className=k===tab?'on':'';}); ({hoy:hoy,pasos:pasos,temas:temas,mas:mas,crisis:crisis})[tab]();}
+function tres(){var temas=st().temas&&st().temas.length?st().temas:['comunicacion']; var out=[],u=[]; temas.forEach(function(k){if(C[k])out=out.concat(C[k].hoy);}); out.forEach(function(x){if(u.indexOf(x)<0)u.push(x);}); return u.slice(0,3);}
+function hoy(){
+  var r=st().racha||0;
+  document.getElementById('t').textContent='Hoy'; document.getElementById('s').textContent='Qué hacer esta noche.';
+  var h='<div class="card"><h3>Tus 3 de hoy</h3>';
+  tres().forEach(function(s,i){h+='<div class="step"><div class="num">'+(i+1)+'</div><div class="muted">'+s+'</div></div>';});
+  h+='<button class="btn blue" onclick="go(\'pasos\')">Ver mis 3 pasos de hoy</button></div>';
+  h+='<button class="btn red" onclick="go(\'crisis\')">Necesito ayuda ya</button>';
+  h+='<a class="btn green" href="'+ALMA+'">Consejo de un profesional</a>';
+  h+='<div class="card"><p class="muted">Racha: '+r+' noche(s).</p><button class="btn line" onclick="checkin()">Hoy estuve presente</button></div>';
+  h+='<button class="ghost" onclick="tut(0)">Cómo usar Alerta (2 min)</button>';
+  h+='<details><summary>Más opciones</summary><button class="ghost" onclick="go(\'temas\')">Temas</button><button class="ghost" onclick="multi()">Varias crisis</button><button class="ghost" onclick="escuela()">Mensaje a la escuela</button><button class="ghost" onclick="aire()">4-7-8</button><button class="ghost" onclick="onb()">Cambiar edad o temas</button><button class="ghost" onclick="reset()">Empezar de 0</button></details>';
+  document.getElementById('v').innerHTML=h;
+}
+function checkin(){var d=st(), day=new Date().toDateString(); if(d.last!==day){d.racha=(d.racha||0)+1;d.last=day;sv(d);} hoy();}
+function pasos(){document.getElementById('t').textContent='3 pasos'; document.getElementById('s').textContent='Máximo tres.'; var h='<div class="card">'; tres().forEach(function(s,i){h+='<div class="step"><div class="num">'+(i+1)+'</div><div>'+s+'</div></div>';}); document.getElementById('v').innerHTML=h+'</div>';}
+function temas(){
+  document.getElementById('t').textContent='Temas'; document.getElementById('s').textContent='Casa. Escuela. Por dentro. Tú.';
+  var h='', grupos=[['En casa','casa'],['Escuela y celular','esc'],['Por dentro','in'],['Tú','tu']];
+  grupos.forEach(function(g){ h+='<div class="grp">'+g[0]+'</div>'; Object.keys(T).forEach(function(k){ if(T[k].g===g[1]) h+='<div class="card" onclick="ver(\''+k+'\')"><h3>'+T[k].n+'</h3><p class="muted">'+C[k].para+'</p></div>'; }); });
+  document.getElementById('v').innerHTML=h;
+}
+function ver(k){
+  var x=C[k], d=st(); if((d.temas||[]).indexOf(k)<0){d.temas=(d.temas||[]).concat([k]); sv(d);}
+  document.getElementById('t').textContent=T[k].n; document.getElementById('s').textContent='Señales. Hoy. Decir. No hacer.';
+  document.getElementById('v').innerHTML=b('Para qué',x.para)+b('Señales',x.sen)+'<div class="card"><h3>Qué hacer hoy</h3><p class="muted">'+x.hoy.join(' ')+'</p></div>'+b('Qué decir',x.decir)+b('Qué no hacer',x.no)+b('Prevención',x.prev)+b('Emociones',x.emo)+'<div class="card"><h3>Banderas rojas</h3><p class="muted">'+x.flag+'</p><button class="btn red" onclick="go(\'crisis\')">Crisis</button><a class="btn green" href="'+ALMA+'">Consejo de un profesional</a></div><button class="ghost" onclick="go(\'temas\')">Volver</button>';
+}
+function b(t,p){return '<div class="card"><h3>'+t+'</h3><p class="muted">'+p+'</p></div>';}
+function tut(n){var a=[['Una sola cosa','No leas todo.'],['Botón grande','3 pasos = esta noche.'],['Peligro','Crisis nunca se cobra.'],['Temas','Tú los enciendes. No es diagnóstico.'],['Cuidar de ti','Si todo gira alrededor del problema.'],['Cada noche','Hoy. Tres pasos. Cierra el teléfono.']];
+  document.getElementById('t').textContent='Cómo usar Alerta'; document.getElementById('s').textContent=(n+1)+' de 6';
+  document.getElementById('v').innerHTML='<div class="card"><h3>'+a[n][0]+'</h3><p class="muted">'+a[n][1]+'</p>'+(n<5?'<button class="btn blue" onclick="tut('+(n+1)+')">Siguiente</button>':'<button class="btn blue" onclick="go(\'hoy\')">Empezar</button>')+'<button class="ghost" onclick="go(\'hoy\')">Saltar</button></div>';}
+function crisis(){document.getElementById('t').textContent='Crisis'; document.getElementById('s').textContent='Gratis. Siempre.';
+  document.getElementById('v').innerHTML=b('1. No lo dejes solo','Quédate.')+'<div class="card"><h3>2. Llama</h3><a class="btn red" href="tel:911">911</a><a class="btn red" href="tel:988">988 EE.UU. / Canadá</a><p class="muted">México: emergencias locales. Colombia 123. Argentina 135. Chile 600 360 7777. España 024.</p></div><div class="card"><h3>3. Después</h3><p class="muted">Alma no es urgencias.</p><a class="btn green" href="'+ALMA+'">Consejo de un profesional</a></div><p class="muted">No diagnostica. En peligro real, el teléfono de tu país.</p>';}
+function mas(){document.getElementById('t').textContent='Más'; document.getElementById('s').textContent='Mapa.';
+  document.getElementById('v').innerHTML='<div class="card" onclick="tut(0)"><h3>Cómo usar Alerta</h3></div><div class="card" onclick="ver(\'codep\')"><h3>Cuidar de ti</h3></div><div class="card" onclick="multi()"><h3>Varias crisis</h3></div><div class="card" onclick="escuela()"><h3>Mensaje a la escuela</h3></div><div class="card" onclick="aire()"><h3>4-7-8</h3></div><a class="btn green" href="'+ALMA+'">Consejo de un profesional</a><p class="muted">No sustituye terapia, grupos ni autoridades. Crisis no se cobra.</p>';}
+function multi(){document.getElementById('t').textContent='Si hay varias'; document.getElementById('s').textContent='Orden.';
+  document.getElementById('v').innerHTML=b('Primero','Peligro de vida, desmayo, “me quiero morir”, abuso ahora.')+b('Segundo','Violencia o acoso de hoy.')+b('Tercero','Los 3 de Hoy.')+'<button class="btn red" onclick="go(\'crisis\')">Crisis</button>';}
+function escuela(){var txt='Estimados: dejo constancia. Fecha: ___. Hechos: ___. Pido seguimiento por escrito.';
+  document.getElementById('t').textContent='Escuela'; document.getElementById('s').textContent='Hechos. Sin diagnóstico.';
+  document.getElementById('v').innerHTML='<div class="card"><textarea rows="5">'+txt+'</textarea><p class="muted">Cópielo. Es un rastro, no una demanda.</p></div>';}
+function aire(){document.getElementById('t').textContent='Para ti'; document.getElementById('s').textContent='4 · 7 · 8';
+  document.getElementById('v').innerHTML=b('Respira','Inhala 4. Aguanta 7. Suelta 8. Tres veces.')+'<button class="btn blue" onclick="go(\'hoy\')">Hoy</button>';}
+function reset(){if(confirm('¿De 0?')){localStorage.removeItem('alerta_spec');onb();}}
+if(st().edad){document.getElementById('cover').classList.add('hide');go('hoy');}
+</script>
+</body>
+</html>
