@@ -1,0 +1,57 @@
+SUBIR ESTOS ARCHIVOS A GITHUB
+(última pasada: Plan Maestro 18gZW + Enseñanza Digna institucional HPR5c)
+
+0. index-digna.html       ← mapa del ecosistema (abre aquí)
+1. ensenanza-digna.html   ← APP: padre/maestro/dirección/orientación · hechos en vivo
+2. colegio-web.html       ← portada del colegio
+3. propuesta-directores.html  ← carta a dirección + universidad
+4. propuesta-especialistas.html
+5. ecosistema-digna.html  ← movimiento + alianza universitaria + plan de comunicación
+6. alerta-base.html       ← ya lo tienes; no lo borres
+7. deteccion-ia.html      ← reglas de la IA (ago 2026, ciclo 2026–2027)
+8. documento-maestro.html ← junta de expertos + plan de las 20 escuelas
+
+CÓMO (celular):
+- Abre el repo en github.com
+- Add file → Upload files
+- Elige los archivos
+- Commit changes
+
+PARA VERLOS:
+https://TUUSUARIO.github.io/NOMBRE-REPO/ensenanza-digna.html
+https://TUUSUARIO.github.io/NOMBRE-REPO/deteccion-ia.html
+https://TUUSUARIO.github.io/NOMBRE-REPO/propuesta-directores.html
+https://TUUSUARIO.github.io/NOMBRE-REPO/ecosistema-digna.html
+
+Si Pages aún no abre, usa:
+https://htmlpreview.github.io/?https://raw.githubusercontent.com/TUUSUARIO/NOMBRE-REPO/main/ensenanza-digna.html
+
+ALCANCE QUE NO SE TOCA:
+- Canal ahora. IA después del consentimiento (ago 2026).
+- Clínicas = visión de excedente, no producto del lunes.
+- UNAM / universidades = pitch de alianza, no hecho consumado.
+- No editar alerta-base.html.
+
+NOTA DE ESTOS DOS VIDEOS:
+- El Plan Maestro (18gZW): cómo contar la historia. 4 pasos (visión → problema → solución → híbrido) y 4 piezas (documento, deck, video, infografía). No cambia el producto.
+- Enseñanza Digna institucional (HPR5c): prevenir vs reaccionar. NO/SÍ. Ciclo uso→detección→alerta→apoyo humano. Mix de ingresos 50 privada / 30 gobierno / 20 donaciones. Listo para piloto.
+- Detección del ciclo del video = IRE ago 2026, no el lunes.
+- 50/30/20 es mezcla de ingresos, no sustituye el 100% de reinversión ni el 60/40 interno de las 20 escuelas.
+
+VIDEO Proyecto__Enseñanza_Digna.mp4 (cLugo):
+- Idea: infraestructura educativa financiada por la comunidad, no “otra app”.
+- 3 fallas: comunicación rota · prevención tardía · escuelas sin presupuesto.
+- Trato: colegio adopta el canal oficial → paquete tech · costo escuela $0.
+- Paquete que el video lista (NO vender el lunes): web SEO/blog, redes autónomas, IA 24/7, agente de reportes sensibles, cumplimiento LFPDPPP/SEP.
+- Valor de mercado estimado del paquete: $396K–$890K MXN/año (pitch, no factura).
+- Finanzas duales: operación = $99/alumno · crecimiento = crowdfunding $5M (plan).
+- 20 escuelas × 600 alumnos × $99 = $1,188,000 estimado (solo si pagan).
+- Uso $5M: 32 app · 24 equipo · 16 mkt · 16 legal/reserva · 12 especialistas IA.
+- Gobernanza extra: phantom equity, vesting, anti-fuga, consejo con asientos protegidos.
+- Integrado en ecosistema-digna.html + propuesta-directores.html + nota en ensenanza-digna.html.
+- alerta-base.html y deteccion-ia.html no se tocaron.
+
+CORRECCIÓN DE FONDO (fundador):
+- El maestro NO se vuelve recepcionista por usar el canal. WhatsApp sí lo vuelve.
+- Problema del salón: no pueden sostener el comportamiento. Notificación en tiempo real (no entró / conducta) cambia el escenario porque el alumno sabe que casa se entera hoy.
+- Para el padre el hijo es una inversión. Enterarse en junio, cuando ya reprobó, es el daño.

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#0F3D75"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="Enseñanza Digna"/>
+<title>Enseñanza Digna</title>
+<style>
+:root{--navy:#0F3D75;--blue:#1A56A0;--sand:#F3EEE4;--card:#fff;--ink:#1A202C;--m:#4A5568;--g:#276749;--r:#9B2C2C;--line:#E2E8F0;--warm:#C47A4A}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#0B1220;color:var(--ink)}
+.app{max-width:430px;margin:0 auto;min-height:100dvh;background:var(--sand);position:relative}
+.cover{min-height:100dvh;background:linear-gradient(180deg,rgba(15,61,117,.2),rgba(15,61,117,.94)),#0F3D75;color:#fff;display:flex;flex-direction:column;justify-content:flex-end;padding:28px 22px 36px}
+.k{letter-spacing:.2em;font-size:.68rem;opacity:.8}
+.cover h1{font-size:2rem;line-height:1.15;margin:10px 0 8px}
+.cover p{opacity:.92;line-height:1.45}
+.btn{display:block;width:100%;border:0;border-radius:16px;padding:15px;font-weight:700;font-size:1rem;margin-top:10px;cursor:pointer}
+.navy{background:#fff;color:var(--navy)}.blue{background:var(--blue);color:#fff}.green{background:var(--g);color:#fff}
+.line{background:#fff;border:2px solid var(--line);color:var(--ink)}.warm{background:var(--warm);color:#fff}.danger{background:#fff;border:2px solid #FED7D7;color:var(--r)}
+header{padding:16px 16px 8px;background:var(--navy);color:#fff}
+header .row{display:flex;justify-content:space-between;align-items:center}
+header h1{margin:0;font-size:1.15rem}header p{margin:4px 0 0;opacity:.85;font-size:.84rem}
+.logo{width:36px;height:36px;border-radius:10px;background:#fff;color:var(--navy);display:grid;place-items:center;font-weight:800}
+.roles{display:flex;gap:4px;padding:10px;background:#123A6B}
+.roles button{flex:1;border:0;border-radius:999px;padding:8px 4px;font-size:.66rem;background:#1A4A82;color:#fff}
+.roles button.on{background:#fff;color:var(--navy);font-weight:700}
+main{padding:12px 16px 116px}
+.card{background:var(--card);border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:0 8px 22px rgba(15,61,117,.07)}
+.card h2{margin:0 0 8px;font-size:1.05rem}
+.muted{color:var(--m);line-height:1.5;font-size:.92rem}
+.nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:430px;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:8px 2px calc(12px + env(safe-area-inset-bottom));z-index:9}
+.nav button{background:0;border:0;color:#718096;font-size:.7rem;font-weight:600}
+.nav button.on{color:var(--navy)}
+.row{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.pill{font-size:.7rem;background:#EBF4FF;color:var(--blue);border-radius:999px;padding:3px 8px;font-weight:700}
+.pill.ok{background:#E6FFFA;color:var(--g)}.pill.warn{background:#FFFAF0;color:#C05621}.pill.bad{background:#FFF5F5;color:var(--r)}
+a.btn{text-align:center;text-decoration:none}
+.hide{display:none!important}
+input,select,textarea{width:100%;padding:11px;border-radius:12px;border:1px solid var(--line);font:inherit;margin-top:6px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.stat{background:#F7FAFC;border-radius:14px;padding:12px;text-align:center}
+.stat b{display:block;font-size:1.3rem;color:var(--navy)}
+.stat span{font-size:.72rem;color:var(--m)}
+.note{font-size:.8rem;color:var(--m);margin-top:8px}
+.ev{border-bottom:1px solid var(--line);padding:10px 0}
+.ev:last-child{border:0}
+.toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);background:#1A202C;color:#fff;padding:10px 16px;border-radius:999px;font-size:.82rem;z-index:20;max-width:90%}
+.alumnos button{width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:8px;font:inherit}
+.alumnos button b{display:block}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="cover" id="cover">
+    <div class="k">ENSEÑANZA DIGNA · CANAL OFICIAL</div>
+    <h1>Casa se entera hoy.</h1>
+    <p>Si no entró o se portó mal, el padre lo ve ahora —no en junio, cuando ya reprobó. El maestro toca un hecho y sigue la clase.</p>
+    <button class="btn navy" onclick="entrar()">Entrar al canal</button>
+    <button class="btn line" onclick="location.href='index-digna.html'">Ver el ecosistema</button>
+  </div>
+  <div id="shell" class="hide">
+    <header>
+      <div class="row">
+        <div>
+          <h1 id="school">Colegio San José</h1>
+          <p id="who">Padre · Ana · 2° A</p>
+        </div>
+        <div class="logo" id="logoMark">SJ</div>
+      </div>
+    </header>
+    <div class="roles">
+      <button class="on" id="b-padre" onclick="rol('padre')">Padre</button>
+      <button id="b-maestro" onclick="rol('maestro')">Maestro</button>
+      <button id="b-dir" onclick="rol('dir')">Dirección</button>
+      <button id="b-ori" onclick="rol('ori')">Orientación</button>
+    </div>
+    <main id="v"></main>
+    <nav class="nav">
+      <button class="on" id="n-hoy" onclick="go('hoy')">Hoy</button>
+      <button id="n-escuela" onclick="go('escuela')">Escuela</button>
+      <button id="n-casa" onclick="go('casa')">En casa</button>
+      <button id="n-mas" onclick="go('mas')">Más</button>
+    </nav>
+  </div>
+</div>
+<div id="toast" class="toast hide"></div>
+<script>
+var ALERTA="alerta-base.html", ALMA="https://usalma.app/";
+var role="padre", tab="hoy";
+var brand=JSON.parse(localStorage.getItem("ed_brand")||'{"name":"Colegio San José","mark":"SJ"}');
+var ALUMS=["Ana López","Diego Ruiz","Sofía Méndez","Luis Ortega","María Solís"];
+function loadEv(){try{return JSON.parse(localStorage.getItem("ed_ev")||"[]")}catch(e){return[]}}
+function saveEv(a){localStorage.setItem("ed_ev",JSON.stringify(a.slice(0,40)))}
+function loadOpen(){try{return JSON.parse(localStorage.getItem("ed_open")||"{}")}catch(e){return{}}}
+function toast(t){var el=document.getElementById("toast");el.textContent=t;el.classList.remove("hide");setTimeout(function(){el.classList.add("hide")},2200)}
+function applyBrand(){
+  document.getElementById("school").textContent=brand.name;
+  document.getElementById("logoMark").textContent=brand.mark||brand.name.slice(0,2).toUpperCase();
+}
+function entrar(){document.getElementById("cover").classList.add("hide");document.getElementById("shell").classList.remove("hide");applyBrand();go("hoy")}
+function rol(r){
+  role=r;
+  ["padre","maestro","dir","ori"].forEach(function(k){document.getElementById("b-"+k).className=k===r?"on":""});
+  document.getElementById("who").textContent=r==="padre"?"Padre · Ana · 2° A":r==="maestro"?"Maestra · 2° A · 32 alumnos":r==="ori"?"Orientadora · confidencial":"Dirección · 842 inscritos";
+  go(tab);
+}
+function go(t){
+  tab=t;
+  ["hoy","escuela","casa","mas"].forEach(function(k){document.getElementById("n-"+k).className=k===t?"on":""});
+  if(t==="hoy")hoy(); if(t==="escuela")escuela(); if(t==="casa")casa(); if(t==="mas")mas();
+}
+function when(ts){return new Date(ts).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"})}
+function pillFor(tipo){
+  if(tipo==="Falta"||tipo==="No entró")return "pill bad";
+  if(tipo==="Retardo"||tipo==="Conducta")return "pill warn";
+  if(tipo==="Reconocimiento")return "pill ok";
+  return "pill";
+}
+function seedIfEmpty(){
+  var ev=loadEv();
+  if(ev.length)return ev;
+  ev=[{id:1,alum:"Ana López",tipo:"Retardo",nota:"Llegó 8:12",ts:Date.now()-3600000,visto:false}];
+  saveEv(ev);return ev;
+}
+function hoy(){
+  if(role==="padre")return padreHoy();
+  if(role==="maestro")return maestroHoy();
+  if(role==="ori")return panelPsi();
+  return dirHoy();
+}
+function padreHoy(){
+  var ev=seedIfEmpty().filter(function(e){return e.alum==="Ana López"});
+  var html='<div class="card"><div class="row"><span class="pill warn">En vivo</span><span class="muted">Hoy</span></div><h2 style="margin-top:10px">Lo que pasó con Ana</h2><p class="muted">Usted se entera ahora. No en junio, cuando el año ya está reprobado.</p></div>';
+  if(!ev.length)html+='<div class="card"><h2>Sin avisos nuevos</h2><p class="muted">Cuando el maestro registre falta, retardo o conducta, aparece aquí.</p></div>';
+  ev.forEach(function(e){
+    html+='<div class="card"><div class="row"><span class="'+pillFor(e.tipo)+'">'+e.tipo+'</span><span class="muted">'+when(e.ts)+'</span></div><h2 style="margin-top:10px">'+e.alum+'</h2><p class="muted">'+(e.nota||"Hecho registrado.")+'</p><button class="btn blue" onclick="marcarVisto('+e.id+')">Ya lo vi</button></div>';
+  });
+  html+='<div class="card"><h2>Aviso por firmar</h2><p class="muted">Junta de padres · viernes 8:00 · 2° A</p><input id="firma" placeholder="Nombre completo"/><button class="btn blue" onclick="firmar()">Confirmar recibido</button></div>';
+  html+='<div class="card"><h2>Si esta noche está difícil</h2><p class="muted">No diagnostique. Tres pasos en En casa. Si no baja, un profesional.</p><button class="btn line" onclick="go(\'casa\')">Abrir En casa</button></div>';
+  document.getElementById("v").innerHTML=html;
+}
+function marcarVisto(id){
+  var ev=loadEv().map(function(e){if(e.id===id)e.visto=true;return e});
+  saveEv(ev);toast("Dirección ve que usted abrió el aviso");go("hoy");
+}
+function maestroHoy(){
+  var ev=loadEv();
+  var html='<div class="card"><h2>Un toque. Sigue la clase.</h2><p class="muted">Falta, no entró o conducta. Casa lo ve ahora. El alumno sabe que pueden enterarse en esta hora. Usted no administra 32 chats.</p></div>';
+  html+='<div class="card"><h2>Elegir alumno · 2° A</h2><div class="alumnos">';
+  ALUMS.forEach(function(n,i){
+    html+='<button onclick="elegir('+i+')"><b>'+n+'</b><span class="muted">Tocar para registrar un hecho</span></button>';
+  });
+  html+='</div></div>';
+  html+='<div class="card"><h2>Enviados hoy</h2>';
+  if(!ev.length)html+='<p class="muted">Nada aún. El primer toque cambia el escenario del salón.</p>';
+  ev.slice(0,6).forEach(function(e){
+    html+='<div class="ev"><div class="row"><b>'+e.alum+'</b><span class="'+pillFor(e.tipo)+'">'+e.tipo+'</span></div><p class="muted" style="margin:4px 0 0">'+when(e.ts)+(e.visto?" · padre vio":" · en camino")+'</p></div>';
+  });
+  html+='</div>';
+  document.getElementById("v").innerHTML=html;
+}
+function elegir(i){
+  var n=ALUMS[i];
+  document.getElementById("v").innerHTML=
+    '<div class="card"><h2>'+n+'</h2><p class="muted">Solo el hecho. Ocho segundos. La clase no se para.</p>'+
+    '<div class="grid2">'+
+    '<button class="btn danger" onclick="hecho(\''+n+'\',\'No entró\')">No entró</button>'+
+    '<button class="btn warm" onclick="hecho(\''+n+'\',\'Retardo\')">Retardo</button>'+
+    '<button class="btn line" onclick="hecho(\''+n+'\',\'Conducta\')">Conducta</button>'+
+    '<button class="btn green" onclick="hecho(\''+n+'\',\'Reconocimiento\')">Bien hoy</button>'+
+    '</div>'+
+    '<textarea id="nota" rows="2" placeholder="Opcional. Ejemplo: no entregó mates. Prohibido: ansiedad, adicción, TDAH."></textarea>'+
+    '<button class="btn line" onclick="go(\'hoy\')">Cancelar</button>'+
+    '<p class="note">El padre de '+n+' lo ve en Hoy. Dirección ve si lo abrió.</p></div>';
+}
+function hecho(alum,tipo){
+  var nota=(document.getElementById("nota")&&document.getElementById("nota").value)||"";
+  var ev=loadEv();
+  ev.unshift({id:Date.now(),alum:alum,tipo:tipo,nota:nota,ts:Date.now(),visto:false});
+  saveEv(ev);
+  toast("Enviado a casa · "+alum+" · "+tipo);
+  go("hoy");
+}
+function dirHoy(){
+  var ev=loadEv();
+  var abiertos=ev.filter(function(e){return e.visto}).length;
+  document.getElementById("v").innerHTML=
+    '<div class="grid2">'+
+    '<div class="stat"><b>842</b><span>inscritos</span></div>'+
+    '<div class="stat"><b>'+ev.length+'</b><span>hechos hoy (demo)</span></div>'+
+    '<div class="stat"><b>'+abiertos+'</b><span>padres que ya vieron</span></div>'+
+    '<div class="stat"><b>'+(ev.length-abiertos)+'</b><span>aún no abren</span></div></div>'+
+    '<div class="card"><h2>Un canal, no 842 WhatsApps</h2><p class="muted">El maestro registra un hecho. El padre lo ve. Usted sabe quién no abrió. El alumno sabe que casa se entera hoy —por eso cambia el salón.</p></div>'+
+    '<div class="card"><h2>Hechos del día</h2>'+(ev.length?ev.map(function(e){return '<div class="ev"><div class="row"><b>'+e.alum+'</b><span class="'+pillFor(e.tipo)+'">'+e.tipo+'</span></div><p class="muted" style="margin:4px 0 0">'+(e.visto?"Padre vio":"Sin abrir")+' · '+when(e.ts)+'</p></div>'}).join(""):'<p class="muted">Aún no hay hechos. Pida al maestro que registre uno.</p>')+'</div>'+
+    '<div class="card"><h2>La escuela no vende terapia</h2><p class="muted">Abre la puerta a Alma. El padre decide.</p></div>'+
+    '<div class="card"><span class="pill warn">Demo · ago 2026</span><h2 style="margin-top:10px">Detección IA (solo psicólogo)</h2><p class="muted">Esta pantalla no muestra nombres en rojo. El IRE vive en Orientación. Opt-in. No diagnostica.</p><div class="grid2"><div class="stat"><b>3</b><span>alertas privadas</span></div><div class="stat"><b>off</b><span>padres / maestros</span></div></div><button class="btn line" onclick="panelPsi()">Vista del psicólogo (demo)</button></div>';
+}
+function panelPsi(){
+  document.getElementById("v").innerHTML=
+    '<div class="card"><span class="pill warn">Confidencial · psicólogo</span><h2 style="margin-top:10px">Alumno 2° A · IRE 81</h2>'+
+    '<p class="muted">Demo ciclo 2026–2027. Señales escolares, no clínicas: retardos, faltas, “no entregó mates”, “me preocupa un amigo”. Sin cámaras.</p>'+
+    '<p class="muted"><b>La IA sugiere. Usted decide.</b> No escribe ansiedad. No avisa al grupo.</p>'+
+    '<button class="btn blue" onclick="toast(\'En producción: cita privada. El expediente escolar no guarda esta nota.\')">Hablar con el alumno</button>'+
+    '<button class="btn line" onclick="toast(\'El padre no recibe el número IRE.\')">Llamar a casa</button>'+
+    '<a class="btn green" href="'+ALMA+'">Puerta a Alma</a>'+
+    '<button class="btn line" onclick="go(\'hoy\')">Cerrar</button>'+
+    '<p class="note">Opt-in. Se apaga. LFPDPPP. Reglas en deteccion-ia.html</p></div>';
+}
+function firmar(){
+  var n=(document.getElementById("firma").value||"").trim();
+  if(n.length<4){toast("Escriba su nombre");return}
+  var o=loadOpen();o.junta=n+" · "+new Date().toLocaleString("es-MX");localStorage.setItem("ed_open",JSON.stringify(o));
+  document.getElementById("v").innerHTML='<div class="card"><span class="pill ok">Firmado</span><h2 style="margin-top:10px">Recibido</h2><p class="muted">'+o.junta+'</p><p class="muted">Dirección ve la lista. WhatsApp no hace esto.</p><button class="btn blue" onclick="go(\'hoy\')">Hoy</button></div>';
+}
+function escuela(){
+  if(role==="dir"){
+    document.getElementById("v").innerHTML=
+      '<div class="card"><h2>Publicar aviso</h2><input id="at" placeholder="Título"/><textarea id="ax" rows="3" placeholder="Texto corto. Fecha. Qué firman."></textarea><button class="btn blue" onclick="toast(\'En el colegio real llega al grado que elija\')">Publicar</button></div>'+
+      '<div class="card"><h2>Boletas</h2><p class="muted">Se suben por periodo. El padre las ve aquí. No se mezclan con Alerta.</p></div>'+
+      '<div class="card"><h2>Permisos digitales</h2><p class="muted">Salida, excursión, uso de imagen. Firma en el celular. Usted ve quién falta.</p></div>';
+    return;
+  }
+  if(role==="maestro"){
+    document.getElementById("v").innerHTML=
+      '<div class="card"><h2>Lista del grupo</h2><p class="muted">32 alumnos. Un toque por hecho. No un hilo por familia.</p><button class="btn blue" onclick="go(\'hoy\')">Registrar hecho</button></div>'+
+      '<div class="card"><h2>Boleta del periodo</h2><p class="muted">Se carga una vez. El padre la abre en Escuela.</p></div>';
+    return;
+  }
+  document.getElementById("v").innerHTML=
+    '<div class="card"><h2>Boleta · 1er periodo</h2><p class="muted">Español 9.2<br/>Matemáticas 8.4<br/>Ciencias 8.8<br/>Formación 9.5</p></div>'+
+    '<div class="card"><h2>Calendario</h2><p class="muted">Vie 8:00 junta 2° A<br/>Lun 15:00 entrega de boletas</p></div>'+
+    '<div class="card"><h2>Permiso por firmar</h2><p class="muted">Salida a museo · 12 sep · 8:00–14:00.</p><input placeholder="Nombre completo"/><button class="btn blue" onclick="toast(\'Permiso firmado. Dirección lo ve en la lista.\')">Firmar permiso</button></div>'+
+    '<div class="card"><h2>Uniforme y horarios</h2><p class="muted">FAQ del colegio. Dirección lo edita una vez.</p></div>';
+}
+function casa(){
+  document.getElementById("v").innerHTML=
+    '<div class="card"><span class="pill">Prevenir</span><h2 style="margin-top:10px">Esta noche</h2><p class="muted">1. Diez minutos sin celular.<br/>2. Una pregunta: ¿cómo te sientes de verdad?<br/>3. Si no baja, un profesional.</p><a class="btn line" href="'+ALERTA+'">Abrir Alerta</a></div>'+
+    '<div class="card"><h2>Temas de Alerta</h2><p class="muted">Comunicación, conducta, bullying, ansiedad, sustancias. El manual vive en Alerta. Esta app no lo copia.</p><a class="btn line" href="'+ALERTA+'">Ver temas</a></div>'+
+    '<div class="card"><h2>Consejo de un profesional</h2><p class="muted">Cédula. El padre llega desde el canal. La escuela no cobra la sesión.</p><a class="btn green" href="'+ALMA+'">Consejo de un profesional</a></div>'+
+    '<p class="note">Crisis: 800 911 2000 · SAPTEL 55 5259 8121.</p>';
+}
+function mas(){
+  document.getElementById("v").innerHTML=
+    '<div class="card"><h2>Marca de este colegio</h2><p class="muted">Nombre e iniciales. En producción: logo real.</p>'+
+    '<input id="bn" value="'+brand.name+'"/><input id="bm" value="'+brand.mark+'" placeholder="Iniciales"/>'+
+    '<button class="btn blue" onclick="saveBrand()">Guardar en este celular</button></div>'+
+    '<div class="card"><h2>Por qué existe este canal</h2><p class="muted">El maestro no sostiene solo a 35. Si la falta no sale hoy, el alumno aprende que no hay consecuencia. Para el padre el hijo es una inversión: enterarse cuando ya reprobó es tarde.</p></div>'+
+    '<div class="card"><h2>Qué no es</h2><p class="muted">No es red social. No vigila. No diagnostica. No reemplaza al maestro. WhatsApp sí lo vuelve recepcionista. Esto lo deja en el salón.</p></div>'+
+    '<div class="card"><h2>Quién paga</h2><p class="muted">La escuela: $0. Padre $99 / pública $20 o subsidio / gobierno $50. SEO, redes e IA 24/7 no corren el lunes.</p></div>'+
+    '<div class="card"><h2>Esta familia y la IA</h2><p class="muted">Detección opcional, agosto 2026. Usted la apaga. Nadie le manda un IRE al celular.</p><button class="btn line" onclick="toast(\'IA familiar APAGADA en este celular\')">Apagar detección para mi hijo</button></div>'+
+    '<a class="btn green" href="'+ALMA+'">Alma</a>'+
+    '<a class="btn line" href="'+ALERTA+'">Alerta</a>'+
+    '<a class="btn line" href="colegio-web.html">Web del colegio</a>'+
+    '<a class="btn line" href="index-digna.html">Ecosistema</a>'+
+    '<a class="btn line" href="deteccion-ia.html">Reglas IA</a>'+
+    '<button class="btn line" onclick="localStorage.removeItem(\'ed_ev\');toast(\'Demo reiniciada\');go(\'hoy\')">Reiniciar demo</button>';
+}
+function saveBrand(){
+  brand={name:document.getElementById("bn").value||"Colegio",mark:(document.getElementById("bm").value||"ED").slice(0,3).toUpperCase()};
+  localStorage.setItem("ed_brand",JSON.stringify(brand));applyBrand();toast("Guardado en este celular");
+}
+</script>
+</body>
+</html>
