@@ -1,0 +1,16 @@
+APP (única):
+https://javierhdezinc-ux.github.io/alerta-padres/app.html
+
+Cuando subas index.html:
+https://javierhdezinc-ux.github.io/alerta-padres/
+
+Administración portada: direccion / Aleman2026
+
+Roles
+- Padre: falta, boleta, En casa (prevención). No ve Equipo.
+- Maestro: pasa lista. Ve canal Maestros + avisos a todo el personal.
+- Dirección: avisa a intendencia, maestros, seguridad, secretaría, portero, limpieza, mantenimiento, trabajo social.
+- Orientación: trabajo social / confidencial.
+- Equipo: elige su área. Sin WhatsApp.
+
+No uses: foto, foto-1, foto-2, app-6, ZIPs, alerta-v2.
