@@ -234,12 +234,91 @@ function escuela(){
     '<div class="card"><h2>Permiso por firmar</h2><p class="muted">Salida a museo · 12 sep · 8:00–14:00.</p><input placeholder="Nombre completo"/><button class="btn blue" onclick="toast(\'Permiso firmado. Dirección lo ve en la lista.\')">Firmar permiso</button></div>'+
     '<div class="card"><h2>Uniforme y horarios</h2><p class="muted">FAQ del colegio. Dirección lo edita una vez.</p></div>';
 }
+var TEMAS={
+  com:{t:"Comunicación",g:1,s:"Solo dice “no sé”. Se encierra. Evita la comida en familia. Si preguntas cómo está, se cierra.",h:["10 min juntos sin pantallas y sin corregir.","Una pregunta abierta. Si no habla, no fuerces.","Deja la puerta abierta: “cuando quieras, estoy”."],d:"Cuando quieras, estoy disponible sin juzgar.",n:"No interrogues. No sermonees. No digas “siempre igual”.",b:"Silencio + aislamiento + “nada tiene sentido” → En casa no basta. Profesional esta semana."},
+  ans:{t:"Ansiedad",g:0,s:"Preocupación que no baja. Dolor de panza o cabeza. Evita escuela o hablar. Revisa si alguien está enojado. Insomnio. Llanto por cambios chicos.",h:["10 min sin celular. Pregunta: ¿cómo te sientes de verdad?","Valida. No discutas la lógica del miedo.","Respiren 4-7-8 juntos. Quita UNA fuente de ansiedad esta noche."],d:"He notado que cargas mucha preocupación. Estoy de tu lado.",n:"No digas “cálmate”, “no es para tanto”, “otros están peor”. No lo obligues a hablar en el pico.",b:"Pánico repetido, rechazo total a la escuela, no come o no sale → profesional esta semana."},
+  dep:{t:"Ánimo bajo",g:0,s:"Dejó de disfrutar. Duerme mucho más o casi nada. Se aísla. “No le importo a nadie.” Cansancio. Bajan las notas.",h:["Contacto diario sin exigirle que se anime.","10 min juntos, aunque no hable.","Si hay desesperanza, pregunta por daño. Agenda profesional esta semana."],d:"Te veo más apagado y me importa. No estás solo. Podemos buscar ayuda juntos.",n:"No “ponte positivo”. No “es una etapa”. No lo dejes solo muchas horas si hay ideación.",b:"Ideación, plan, autolesión, no come ni duerme → Crisis YA."},
+  bul:{t:"Bullying",g:0,s:"No quiere ir a la escuela. Moretones, cosas “perdidas”. Cambia el humor después de clases. Se culpa. Pide dinero.",h:["Escucha sin interrumpir.","Anota fechas, nombres, hechos.","Habla con un adulto de la escuela. Dile: esto no es tu culpa."],d:"Esto no es tu culpa. Voy a hablar con la escuela con hechos, no con gritos.",n:"No “ignóralos”. No “defiéndete pegando”. No confrontes agresores ni padres por tu cuenta.",b:"Amenazas graves, violencia repetida, ideación por el acoso → dirección y, si aplica, autoridades."},
+  cib:{t:"Ciberbullying",g:0,s:"Miedo al celular. Borra cuentas. Esconde el teléfono. No puede dejar de revisar. “Me están exponiendo.”",h:["Revisen juntos, en calma.","Capturas. Reportar y bloquear.","Si hay escuela, informa con evidencia."],d:"No estás solo con eso. Vamos a documentarlo y a pedirle a la escuela que actúe.",n:"No quites el celular como primer castigo. No respondas tú a los agresores. No “es solo internet”.",b:"Amenazas, imágenes íntimas, chantaje → documentar y denunciar. No confrontes solo al agresor."},
+  adi:{t:"Sustancias y pantallas",g:0,s:"Cambio de amigos. Olores, ojos, peso. Mentiras de dónde estuvo. Dinero o pastillas que faltan. Pierde escuela o deporte. Irritable si no consume. Horas de juego con pelea si se corta.",h:["10 min desde la preocupación. No uses la palabra adicto.","Distingue sustancia vs pantallas. Anota 3 días.","Reduce el acceso fácil. Una alternativa concreta. Agenda evaluación. No esperes “tocar fondo”."],d:"Te quiero. El alcohol y las drogas pueden generar una enfermedad tratable. Vamos a buscar ayuda. No te abandono.",n:"No humilles. No “es normal de la edad”. No interrogatorio 24/7. No quitar el celular como único tratamiento.",b:"Intoxicación, desmayo, agresividad con consumo, ideación, opioides o inhalantes → urgencias."},
+  aco:{t:"Acoso / abuso",g:0,s:"Miedo a personas o lugares. Cambia higiene o ropa. Regresión. Evita a alguien. Quejas físicas sin causa clara.",h:["Espacio seguro. Dile te creo.","Corta contacto con la persona señalada.","Si hay sospecha fundada, rutas oficiales el mismo día."],d:"Te creo. No fue tu culpa. Voy a protegerte.",n:"No hagas interrogatorio policial. No pidas “pruebas” al niño. No confrontes al agresor solo.",b:"Sospecha fundada de abuso → proteger hoy y acudir a instancias oficiales. No investigues como detective."},
+  con:{t:"Comportamiento",g:0,s:"Ira desproporcionada. Desafía reglas. Agrede o destruye. Mentiras. Busca riesgos. Parece no importarle la consecuencia.",h:["UNA regla esta semana. Consecuencia que sí puedas cumplir.","Refuerza lo que sí hizo bien.","Revisa sueño, hambre, pantallas y escuela."],d:"Lo que hiciste no está bien. Tú sí me importas.",n:"No grites. No apiles castigos. No compares con hermanos. No esperes que “se le quite”.",b:"Violencia grave, fuga, riesgo a sí o a otros → seguridad + profesional."},
+  cod:{t:"Codependencia (tú)",g:1,s:"No duermes de vigilar. Dejas salud o trabajo. Mientes “para proteger”. Pagas siempre las consecuencias. Pánico al límite. “Solo yo lo arreglo.”",h:["Escribe UN límite.","Deja de cubrir UNA mentira.","5–10 min para ti. Frase: te quiero; no voy a mentir ni a financiar esto; si quieres ayuda, te acompaño."],d:"Las 3 C: no lo causaste, no lo controlas, no lo curas tú solo.",n:"No es amar demasiado. Cubrir retrasa la ayuda. El hijo aprende que siempre hay red de mentira.",b:"Si tú ya no comes, no duermes o estás en pánico constante → también necesitas un profesional."}
+};
+function loadFam(){try{return JSON.parse(localStorage.getItem("ed_fam")||'{"edad":"12-15","temas":["com"]}')}catch(e){return{edad:"12-15",temas:["com"]}}}
+function saveFam(f){localStorage.setItem("ed_fam",JSON.stringify(f))}
+function pasosDe(){
+  var f=loadFam(), keys=f.temas&&f.temas.length?f.temas:["com"], out=[], seen={};
+  keys.forEach(function(k){var m=TEMAS[k];if(!m)return;m.h.forEach(function(x){if(out.length<3&&!seen[x]){seen[x]=1;out.push(x)}})});
+  while(out.length<3)out.push(TEMAS.com.h[out.length]);
+  return out;
+}
 function casa(){
+  var f=loadFam(), ps=pasosDe();
+  var html='<div class="card"><span class="pill ok">Gratis · no diagnostica</span><h2 style="margin-top:10px">Te dice qué hacer hoy</h2><p class="muted">Si el problema ya está o quieres prevenir. Máximo 3 pasos. Crisis nunca se cobra.</p></div>';
+  html+='<button class="btn danger" onclick="crisis()">Necesito ayuda ya</button>';
+  html+='<a class="btn green" href="'+ALMA+'">Consejo de un profesional</a>';
+  html+='<div class="card"><h2>Tus 3 de hoy</h2><p class="muted">Edad '+f.edad+' · temas activos.</p><p class="muted">1. '+ps[0]+'<br/>2. '+ps[1]+'<br/>3. '+ps[2]+'</p><button class="btn blue" onclick="checkin()">Hice los 3 · racha</button></div>';
+  html+='<div class="card"><h2>Temas</h2><p class="muted">Activa los que sí están pasando. Comunicación y codependencia son libres. Lo demás también se lee aquí; la profundidad larga vive en Alerta.</p>';
+  Object.keys(TEMAS).forEach(function(k){
+    var on=f.temas.indexOf(k)>=0;
+    html+='<button class="btn '+(on?"blue":"line")+'" onclick="toggleTema(\''+k+'\')">'+(on?"● ":"○ ")+TEMAS[k].t+(TEMAS[k].g?" · gratis":"")+'</button>';
+  });
+  html+='</div>';
+  html+='<div class="card"><h2>Edad</h2><div class="grid2">'+["6-11","12-15","15-18","18+"].map(function(e){return '<button class="btn '+(f.edad===e?"blue":"line")+'" onclick="setEdad(\''+e+'\')">'+e+'</button>'}).join("")+'</div></div>';
+  html+='<button class="btn line" onclick="evalRapida()">Evaluación rápida (no diagnostica)</button>';
+  html+='<a class="btn line" href="'+ALERTA+'">Abrir Alerta completa</a>';
+  html+='<p class="note">En peligro real: 911 · 800 911 2000 · SAPTEL 55 5259 8121 · 988 si estás en EE.UU.</p>';
+  document.getElementById("v").innerHTML=html;
+}
+function toggleTema(k){
+  var f=loadFam();
+  var i=f.temas.indexOf(k);
+  if(i>=0){if(f.temas.length>1)f.temas.splice(i,1)}else f.temas.push(k);
+  saveFam(f); tema(k);
+}
+function setEdad(e){var f=loadFam();f.edad=e;saveFam(f);casa()}
+function tema(k){
+  var m=TEMAS[k]; if(!m)return casa();
   document.getElementById("v").innerHTML=
-    '<div class="card"><span class="pill">Prevenir</span><h2 style="margin-top:10px">Esta noche</h2><p class="muted">1. Diez minutos sin celular.<br/>2. Una pregunta: ¿cómo te sientes de verdad?<br/>3. Si no baja, un profesional.</p><a class="btn line" href="'+ALERTA+'">Abrir Alerta</a></div>'+
-    '<div class="card"><h2>Temas de Alerta</h2><p class="muted">Comunicación, conducta, bullying, ansiedad, sustancias. El manual vive en Alerta. Esta app no lo copia.</p><a class="btn line" href="'+ALERTA+'">Ver temas</a></div>'+
-    '<div class="card"><h2>Consejo de un profesional</h2><p class="muted">Cédula. El padre llega desde el canal. La escuela no cobra la sesión.</p><a class="btn green" href="'+ALMA+'">Consejo de un profesional</a></div>'+
-    '<p class="note">Crisis: 800 911 2000 · SAPTEL 55 5259 8121.</p>';
+    '<div class="card"><span class="pill'+(m.g?" ok":"")+'">'+(m.g?"Gratis":"Guía")+'</span><h2 style="margin-top:10px">'+m.t+'</h2><p class="muted">No es diagnóstico. Es qué hacer esta noche.</p></div>'+
+    '<div class="card"><h2>Señales</h2><p class="muted">'+m.s+'</p></div>'+
+    '<div class="card"><h2>Qué hacer HOY</h2><p class="muted">1. '+m.h[0]+'<br/>2. '+m.h[1]+'<br/>3. '+m.h[2]+'</p></div>'+
+    '<div class="card"><h2>Qué decir</h2><p class="muted">“'+m.d+'”</p></div>'+
+    '<div class="card"><h2>Qué NO hacer</h2><p class="muted">'+m.n+'</p></div>'+
+    '<div class="card"><h2>Banderas rojas</h2><p class="muted">'+m.b+'</p></div>'+
+    '<button class="btn danger" onclick="crisis()">Crisis</button>'+
+    '<a class="btn green" href="'+ALMA+'">Profesional con cédula</a>'+
+    '<button class="btn line" onclick="casa()">Volver a En casa</button>';
+}
+function crisis(){
+  document.getElementById("v").innerHTML=
+    '<div class="card"><span class="pill bad">Gratis siempre</span><h2 style="margin-top:10px">Si hay peligro ahora</h2><p class="muted">1. No lo dejes solo.<br/>2. Quita lo que pueda usarse para hacerse daño.<br/>3. Llama. No esperes a que “se le pase”.</p></div>'+
+    '<a class="btn danger" href="tel:911">911</a>'+
+    '<a class="btn danger" href="tel:8009112000">México 800 911 2000</a>'+
+    '<a class="btn line" href="tel:5552598121">SAPTEL 55 5259 8121</a>'+
+    '<p class="muted">EE.UU. / Canadá: 988. Si no es tu país, usa emergencias locales.</p>'+
+    '<a class="btn green" href="'+ALMA+'">Consejo de un profesional</a>'+
+    '<button class="btn line" onclick="casa()">Volver</button>'+
+    '<p class="note">Esto no sustituye urgencias ni terapia. La escuela no diagnostica.</p>';
+}
+function checkin(){
+  var d=new Date().toISOString().slice(0,10);
+  var p=JSON.parse(localStorage.getItem("ed_pro")||"[]");
+  if(p.indexOf(d)<0)p.push(d);
+  localStorage.setItem("ed_pro",JSON.stringify(p.slice(-30)));
+  toast("Racha: "+p.length+" días. El canal no se entera de esto.");
+}
+function evalRapida(){
+  document.getElementById("v").innerHTML=
+    '<div class="card"><h2>7 preguntas</h2><p class="muted">Semáforo orientativo. No diagnostica. No se guarda en el expediente escolar.</p>'+
+    ["¿Duerme mucho peor o casi nada?","¿Dejó de hacer lo que le gustaba?","¿Evita la escuela o a la familia?","¿Hay pelea fuerte por celular o dinero?","¿Mencionó que no vale la pena seguir?","¿Viste moretones, amenazas o acoso?","¿Tú ya no puedes más esta semana?"].map(function(q,i){return '<label class="muted" style="display:block;margin:8px 0"><input type="checkbox" id="eq'+i+'"/> '+q+'</label>'}).join("")+
+    '<button class="btn blue" onclick="verSemaforo()">Ver orientación</button><button class="btn line" onclick="casa()">Cancelar</button></div>';
+}
+function verSemaforo(){
+  var n=0;for(var i=0;i<7;i++)if(document.getElementById("eq"+i).checked)n++;
+  var msg=n>=5?"Rojo orientativo: Crisis + profesional esta semana. No es un diagnóstico.":n>=3?"Ámbar: activa un tema, haz los 3 de hoy, agenda un profesional si no baja.":"Verde orientativo: sigue los 3 de hoy y abre comunicación. Vigila.";
+  document.getElementById("v").innerHTML='<div class="card"><h2>Resultado</h2><p class="muted">'+n+' de 7. '+msg+'</p><button class="btn danger" onclick="crisis()">Abrir Crisis</button><a class="btn green" href="'+ALMA+'">Alma</a><button class="btn line" onclick="casa()">En casa</button></div>';
 }
 function mas(){
   document.getElementById("v").innerHTML=
@@ -247,15 +326,16 @@ function mas(){
     '<input id="bn" value="'+brand.name+'"/><input id="bm" value="'+brand.mark+'" placeholder="Iniciales"/>'+
     '<button class="btn blue" onclick="saveBrand()">Guardar en este celular</button></div>'+
     '<div class="card"><h2>Por qué existe este canal</h2><p class="muted">El maestro no sostiene solo a 35. Si la falta no sale hoy, el alumno aprende que no hay consecuencia. Para el padre el hijo es una inversión: enterarse cuando ya reprobó es tarde.</p></div>'+
-    '<div class="card"><h2>Qué no es</h2><p class="muted">No es red social. No vigila. No diagnostica. No reemplaza al maestro. WhatsApp sí lo vuelve recepcionista. Esto lo deja en el salón.</p></div>'+
-    '<div class="card"><h2>Quién paga</h2><p class="muted">La escuela: $0. Padre $99 / pública $20 o subsidio / gobierno $50. SEO, redes e IA 24/7 no corren el lunes.</p></div>'+
-    '<div class="card"><h2>Esta familia y la IA</h2><p class="muted">Detección opcional, agosto 2026. Usted la apaga. Nadie le manda un IRE al celular.</p><button class="btn line" onclick="toast(\'IA familiar APAGADA en este celular\')">Apagar detección para mi hijo</button></div>'+
+    '<div class="card"><h2>En casa</h2><p class="muted">Aquí vive Alerta: 3 pasos, crisis gratis, temas, codependencia. No diagnostica. No se mezcla con la boleta. La versión larga sigue en alerta-base.html.</p></div>'+
+    '<div class="card"><h2>Qué no es</h2><p class="muted">No es red social. No vigila. No diagnostica. No reemplaza al maestro ni al psicólogo.</p></div>'+
+    '<div class="card"><h2>Quién paga</h2><p class="muted">Escuela $0. Canal: $99 / $20 / $50. Crisis de En casa nunca se cobra.</p></div>'+
+    '<div class="card"><h2>Esta familia y la IA</h2><p class="muted">Detección opcional, agosto 2026. Usted la apaga. Nadie le manda un IRE.</p><button class="btn line" onclick="toast(\'IA familiar APAGADA en este celular\')">Apagar detección para mi hijo</button></div>'+
     '<a class="btn green" href="'+ALMA+'">Alma</a>'+
-    '<a class="btn line" href="'+ALERTA+'">Alerta</a>'+
+    '<a class="btn line" href="'+ALERTA+'">Alerta completa</a>'+
     '<a class="btn line" href="colegio-web.html">Web del colegio</a>'+
     '<a class="btn line" href="index-digna.html">Ecosistema</a>'+
     '<a class="btn line" href="deteccion-ia.html">Reglas IA</a>'+
-    '<button class="btn line" onclick="localStorage.removeItem(\'ed_ev\');toast(\'Demo reiniciada\');go(\'hoy\')">Reiniciar demo</button>';
+    '<button class="btn line" onclick="localStorage.removeItem(\'ed_ev\');toast(\'Demo de hechos reiniciada\');go(\'hoy\')">Reiniciar hechos</button>';
 }
 function saveBrand(){
   brand={name:document.getElementById("bn").value||"Colegio",mark:(document.getElementById("bm").value||"ED").slice(0,3).toUpperCase()};
