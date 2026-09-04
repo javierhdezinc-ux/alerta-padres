@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Mapa de comunicación · Enseñanza Digna</title>
+<style>
+:root{--navy:#0F3D75;--sand:#F3EEE4;--ink:#1A202C;--m:#4A5568}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--sand);color:var(--ink);line-height:1.45}
+.wrap{max-width:720px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:1.4rem;color:var(--navy);margin:0 0 8px}
+h2{font-size:1.1rem;color:var(--navy);margin:0 0 8px}
+.k{letter-spacing:.14em;font-size:.68rem;color:var(--m);text-transform:uppercase}
+.card{background:#fff;border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 6px 16px rgba(15,61,117,.07)}
+.muted{color:var(--m);font-size:.92rem}
+.tree{font-family:ui-monospace,Menlo,monospace;font-size:.78rem;white-space:pre-wrap;background:#0B1220;color:#E2E8F0;padding:14px;border-radius:12px;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:.72rem}
+th,td{border:1px solid #E2E8F0;padding:6px 4px;text-align:center}
+th{background:#0F3D75;color:#fff;font-weight:600}
+td:first-child,th:first-child{text-align:left}
+.ok{color:#276749;font-weight:700}
+.no{color:#9B2C2C}
+.mid{color:#C05621}
+a.btn{display:block;text-align:center;background:var(--navy);color:#fff;text-decoration:none;padding:14px;border-radius:14px;font-weight:700;margin:12px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<p class="k">Enseñanza Digna</p>
+<h1>Quién habla con quién</h1>
+<p class="muted">No es un grupo de WhatsApp. Laboral ≠ comunicación. Cada puesto ve solo lo que necesita.</p>
+<a class="btn" href="app.html">Abrir la app</a>
+
+<div class="card">
+<h2>Problema que resolvemos</h2>
+<p class="muted">Si todos pueden escribirle a todos, el maestro se satura, intendencia ve padres, psicología se filtra y Dirección se vuelve recepcionista. El caos no se cura con otro chat.</p>
+</div>
+
+<div class="card">
+<h2>A. Organigrama laboral</h2>
+<div class="tree">Director general
+├─ Subdirección → Prefectura, Psicología, Enfermería
+├─ Administración → Secretaría, Finanzas, Operaciones
+│                    └─ Seguridad, Intendencia, Mantenimiento
+└─ Coordinación académica → Docentes, Tutores de grupo, Prefectos de nivel
+Padres / tutores: capa externa. No están bajo el docente en el organigrama laboral.</div>
+</div>
+
+<div class="card">
+<h2>B. Organigrama de comunicación</h2>
+<div class="tree">Dirección  ↔  todo el personal + comunicados a padres
+Coordinador  ↔  sus docentes, prefectos, psicología, padres de su nivel
+Docente  ↔  coordinador, equipo de grado, padres de SUS grupos
+Psicología  ↔  dirección, coordinador, docente del caso, padre autorizado
+Intendencia  ↔  jefe de intendencia / operaciones (emergencia: seguridad)
+Mantenimiento  ←  tickets, no chat libre
+Padre  ↔  docente del hijo, secretaría, administración, coordinador
+Padre  ✕  intendencia, guardias, otros padres, todos los maestros</div>
+</div>
+
+<div class="card">
+<h2>C. Matriz (mínimo acceso)</h2>
+<div style="overflow:auto">
+<table>
+<tr><th>Rol</th><th>Privado</th><th>Grupo</th><th>Comunicado</th><th>Padres</th><th>Ticket</th><th>911 interno</th></tr>
+<tr><td>Director</td><td>Todos</td><td>Todos</td><td class="ok">Sí</td><td class="ok">Todos</td><td class="ok">Sí</td><td class="ok">Sí</td></tr>
+<tr><td>Subdirector</td><td>Áreas</td><td>Áreas</td><td class="ok">Sí</td><td class="mid">Autoriz.</td><td class="ok">Sí</td><td class="ok">Sí</td></tr>
+<tr><td>Coordinador</td><td>Su nivel</td><td>Su nivel</td><td class="mid">Su nivel</td><td class="mid">Su nivel</td><td class="ok">Sí</td><td class="ok">Sí</td></tr>
+<tr><td>Docente</td><td>Equipo</td><td>Equipo</td><td class="no">No</td><td class="ok">Sus grupos</td><td class="ok">Crear</td><td class="mid">Reportar</td></tr>
+<tr><td>Psicología</td><td>Casos</td><td>Equipo</td><td class="no">No</td><td class="mid">Caso</td><td class="ok">Sí</td><td class="ok">Sí</td></tr>
+<tr><td>Secretaría</td><td>Área</td><td>Área</td><td class="mid">Info</td><td class="ok">Trámite</td><td class="ok">Sí</td><td class="mid">Reportar</td></tr>
+<tr><td>Admin / cobros</td><td>Área</td><td>Área</td><td class="mid">Pagos</td><td class="ok">Cobros</td><td class="ok">Sí</td><td class="mid">Reportar</td></tr>
+<tr><td>Prefectura</td><td>Nivel</td><td>Nivel</td><td class="no">No</td><td class="mid">Política</td><td class="ok">Sí</td><td class="ok">Sí</td></tr>
+<tr><td>Enfermería</td><td>Caso</td><td>No</td><td class="no">No</td><td class="mid">Caso</td><td class="ok">Sí</td><td class="ok">Sí</td></tr>
+<tr><td>Seguridad</td><td>Jefe</td><td>Guardias</td><td class="no">No</td><td class="no">No</td><td class="ok">Sí</td><td class="ok">Sí</td></tr>
+<tr><td>Intendencia</td><td>Jefe</td><td>No</td><td class="no">No</td><td class="no">No</td><td class="ok">Recibir</td><td class="mid">Reportar</td></tr>
+<tr><td>Mantenimiento</td><td>Jefe</td><td>No</td><td class="no">No</td><td class="no">No</td><td class="ok">Resolver</td><td class="mid">Reportar</td></tr>
+<tr><td>Padre / tutor</td><td>Lista corta</td><td class="no">No</td><td class="no">No</td><td class="no">No otros padres</td><td class="ok">Trámite</td><td class="mid">Reportar</td></tr>
+</table>
+</div>
+</div>
+
+<div class="card">
+<h2>E–F. Escalamiento</h2>
+<p class="muted"><b>Académico:</b> Padre → Docente → Coordinador → Subdirección → Dirección.</p>
+<p class="muted"><b>Administrativo:</b> Padre → Secretaría → Administración → Dirección.</p>
+<p class="muted"><b>Mantenimiento:</b> cualquiera → ticket → jefe → técnico → cerrado. No es un chat.</p>
+<p class="muted"><b>Emergencia:</b> botón → Dirección + Seguridad + Enfermería. Después, padres si Dirección lo autoriza.</p>
+</div>
+
+<div class="card">
+<h2>Riesgos y antídoto</h2>
+<p class="muted">Saturar al docente → horario 8:00–18:00 y solo padres de su grupo.<br/>
+Psicología filtrada → canal confidencial, no sale en recados generales.<br/>
+Intendencia en el grupo de papás → directorio filtrado, imposible por diseño.<br/>
+Comunicado que se vuelve debate → comunicado ≠ chat: leer y confirmar, no responder en el mismo hilo.</p>
+</div>
+
+<div class="card">
+<h2>Esta versión (demo en el celular)</h2>
+<p class="muted">En la app: elija Padre o Personal. El personal elige puesto. El directorio cambia. Intendencia no ve padres. El padre no ve guardias. Hay comunicado, recado, ticket y emergencia. Sin servidor todavía: queda en este celular para la demo de 15 minutos.</p>
+</div>
+</div>
+</body>
+</html>

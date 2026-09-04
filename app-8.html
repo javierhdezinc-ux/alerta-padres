@@ -71,6 +71,13 @@ input,select,textarea{width:100%;padding:11px;border-radius:12px;border:1px soli
 .dots i{width:7px;height:7px;border-radius:50%;background:#CBD5E0;display:block}
 .dots i.on{background:var(--navy);width:18px;border-radius:99px}
 
+
+.whoGate{position:fixed;inset:0;background:#0B1220;z-index:35;color:#fff;display:flex;align-items:flex-end;justify-content:center}
+.whoGate .sheet{width:100%;max-width:430px;padding:28px 20px calc(28px + env(safe-area-inset-bottom))}
+.whoGate h2{margin:0 0 8px;font-size:1.45rem}
+.plusbox{background:#FFF7ED;border:1px solid #F6AD55;border-radius:16px;padding:14px;margin-top:10px}
+.lock{font-size:.72rem;background:#FFFAF0;color:#C05621;border-radius:999px;padding:3px 8px;font-weight:700}
+
 </style>
 </head>
 <body>
@@ -156,6 +163,18 @@ input,select,textarea{width:100%;padding:11px;border-radius:12px;border:1px soli
   </div>
 </div>
 
+
+<div id="whoGate" class="whoGate hide">
+  <div class="sheet">
+    <p class="k">ENSEÑANZA DIGNA</p>
+    <h2>¿Quién usa este celular?</h2>
+    <p class="muted" style="color:#CBD5E0">Así cada quien ve solo lo suyo. Se puede cambiar en Más.</p>
+    <button class="btn navy" onclick="setWho('padre')">Soy padre, madre o tutor</button>
+    <button class="btn line" style="background:#1A4A82;color:#fff;border:0" onclick="setWho('staff')">Soy personal de la escuela</button>
+    <p class="note" style="color:#A0AEC0">Padres: avisos del hijo y En casa. Personal: lista, Equipo y dirección. No se mezclan.</p>
+  </div>
+</div>
+
 <div id="toast" class="toast hide"></div>
 <script>
 var ALERTA="alerta-base.html", ALMA="https://usalma.app/";
@@ -214,7 +233,47 @@ function tourSkip(){
   document.getElementById("tour").classList.add("hide");
 }
 
-function entrar(){document.getElementById("cover").classList.add("hide");document.getElementById("shell").classList.remove("hide");applyBrand();rol("padre");go("hoy");if(!localStorage.getItem("ed_tour_done"))tourStart()}
+function entrar(){
+  document.getElementById("cover").classList.add("hide");
+  var w=localStorage.getItem("ed_who");
+  if(!w){document.getElementById("whoGate").classList.remove("hide");return}
+  openApp(w);
+}
+function setWho(w){
+  localStorage.setItem("ed_who",w);
+  document.getElementById("whoGate").classList.add("hide");
+  openApp(w);
+}
+function openApp(w){
+  document.getElementById("shell").classList.remove("hide");
+  applyBrand();
+  applyWho(w);
+  if(w==="padre"){ rol("padre"); go("hoy"); if(!localStorage.getItem("ed_tour_done")) tourStart(); }
+  else { rol("dir"); go("hoy"); }
+}
+function applyWho(w){
+  var bar=document.querySelector(".roles");
+  if(!bar) return;
+  if(w==="padre"){
+    bar.style.display="none";
+    var n3=document.getElementById("n-casa"); if(n3) n3.textContent="En casa";
+  } else {
+    bar.style.display="flex";
+    ["b-padre"].forEach(function(id){var el=document.getElementById(id); if(el) el.style.display="none"});
+    var n3=document.getElementById("n-casa"); if(n3) n3.textContent="Equipo";
+  }
+}
+function plusOn(){return localStorage.getItem("ed_plus")==="1"}
+function buyPlus(){localStorage.setItem("ed_plus","1");toast("Plus activo en este celular · $14.99/mes (demo)");casa()}
+function plusPay(){
+  document.getElementById("v").innerHTML=
+    '<div class="card"><span class="lock">PLUS $14.99 / mes</span><h2 style="margin-top:10px">Profundidad para casa</h2><p class="muted">Laboratorio de adicciones, plan 7 días, tipos de acoso, exportar para un profesional, casos. Crisis, comunicación y codependencia siguen gratis.</p></div>'+
+    '<div class="plusbox"><b>Qué incluye</b><p class="muted">Adicciones (alcohol, vape, pastillas, pantallas). Depresión: señales en la mirada y el cuerpo. Bullying y ciberbullying con hechos. Mensaje a la escuela. Quiz orientativo.</p></div>'+
+    '<button class="btn blue" onclick="buyPlus()">Activar Plus en este celular</button>'+
+    '<button class="btn line" onclick="casa()">Seguir con lo gratis</button>'+
+    '<p class="note">Pago real (Hotmart) se conecta en producción. Crisis nunca se cobra.</p>';
+}
+
 function openAdmin(){document.getElementById("adminModal").classList.remove("hide");document.getElementById("adminLogin").classList.remove("hide");document.getElementById("adminForm").classList.add("hide")}
 function closeAdmin(){document.getElementById("adminModal").classList.add("hide")}
 function tryAdmin(){
@@ -353,7 +412,7 @@ function dirHoy(){
     '<div class="stat"><b>'+(ev.length-abiertos)+'</b><span>aún no abren</span></div></div>'+
     '<div class="card"><h2>Un canal, no 842 WhatsApps</h2><p class="muted">El maestro registra un hecho. El padre lo ve. Usted sabe quién no abrió. El alumno sabe que casa se entera hoy —por eso cambia el salón.</p></div>'+
     '<div class="card"><h2>Hechos del día</h2>'+(ev.length?ev.map(function(e){return '<div class="ev"><div class="row"><b>'+e.alum+'</b><span class="'+pillFor(e.tipo)+'">'+e.tipo+'</span></div><p class="muted" style="margin:4px 0 0">'+(e.visto?"Padre vio":"Sin abrir")+' · '+when(e.ts)+'</p></div>'}).join(""):'<p class="muted">Aún no hay hechos. Pida al maestro que registre uno.</p>')+'</div>'+
-    '<div class="card"><h2>La escuela no vende terapia</h2><p class="muted">Abre la puerta a Alma. El padre decide.</p></div>'+
+    '<div class="card"><h2>La escuela no vende terapia</h2><p class="muted">Si quiere consejo de un profesional, este botón abre esa consulta. El padre decide.</p></div>'+
     '<div class="card"><span class="pill warn">Demo · ago 2026</span><h2 style="margin-top:10px">Detección IA (solo psicólogo)</h2><p class="muted">Esta pantalla no muestra nombres en rojo. El IRE vive en Orientación. Opt-in. No diagnostica.</p><div class="grid2"><div class="stat"><b>3</b><span>alertas privadas</span></div><div class="stat"><b>off</b><span>padres / maestros</span></div></div><button class="btn line" onclick="panelPsi()">Vista del psicólogo (demo)</button></div>';
 }
 function panelPsi(){
@@ -363,7 +422,7 @@ function panelPsi(){
     '<p class="muted"><b>La IA sugiere. Usted decide.</b> No escribe ansiedad. No avisa al grupo.</p>'+
     '<button class="btn blue" onclick="toast(\'En producción: cita privada. El expediente escolar no guarda esta nota.\')">Hablar con el alumno</button>'+
     '<button class="btn line" onclick="toast(\'El padre no recibe el número IRE.\')">Llamar a casa</button>'+
-    '<a class="btn green" href="'+ALMA+'">Puerta a Alma</a>'+
+    '<a class="btn green" href="'+ALMA+'">Hablar con un profesional</a>'+
     '<button class="btn line" onclick="go(\'hoy\')">Cerrar</button>'+
     '<p class="note">Opt-in. Se apaga. LFPDPPP. Reglas en deteccion-ia.html</p></div>';
 }
@@ -374,6 +433,10 @@ function firmar(){
   document.getElementById("v").innerHTML='<div class="card"><span class="pill ok">Firmado</span><h2 style="margin-top:10px">Recibido</h2><p class="muted">'+o.junta+'</p><p class="muted">Dirección ve la lista. WhatsApp no hace esto.</p><button class="btn blue" onclick="go(\'hoy\')">Hoy</button></div>';
 }
 function escuela(){
+  if(localStorage.getItem("ed_who")==="padre"){
+    var extra='<div class="card"><h2>Contactos de su hijo</h2><p class="muted">Docente de Ana · Coordinación · Secretaría · Administración. No aparecen intendencia ni guardias.</p><button class="btn blue" onclick="padreInbox()">Escribir / bandeja</button></div>';
+    /* fall through to parent school view after */
+  }
   if(role==="dir"){
     document.getElementById("v").innerHTML=
       '<div class="card"><h2>Publicar aviso</h2><input id="at" placeholder="Título"/><textarea id="ax" rows="3" placeholder="Texto corto. Fecha. Qué firman."></textarea><button class="btn blue" onclick="toast(\'En el colegio real llega al grado que elija\')">Publicar</button></div>'+
@@ -388,6 +451,7 @@ function escuela(){
     return;
   }
   document.getElementById("v").innerHTML=
+    (typeof extra!=="undefined"?extra:"")+
     '<div class="card"><h2>Boleta · 1er periodo</h2><p class="muted">Español 9.2<br/>Matemáticas 8.4<br/>Ciencias 8.8<br/>Formación 9.5</p></div>'+
     '<div class="card"><h2>Calendario</h2><p class="muted">Vie 8:00 junta 2° A<br/>Lun 15:00 entrega de boletas</p></div>'+
     '<div class="card"><h2>Permiso por firmar</h2><p class="muted">Salida a museo · 12 sep · 8:00–14:00.</p><input placeholder="Nombre completo"/><button class="btn blue" onclick="toast(\'Permiso firmado. Dirección lo ve en la lista.\')">Firmar permiso</button></div>'+
@@ -413,47 +477,170 @@ function pasosDe(){
   return out;
 }
 
-var DEPTS=[{id:"todos",n:"Todo el personal"},{id:"maestros",n:"Maestros"},{id:"secretaria",n:"Secretaría"},{id:"seguridad",n:"Seguridad"},{id:"portero",n:"Portero"},{id:"intendencia",n:"Intendencia"},{id:"limpieza",n:"Limpieza"},{id:"mantenimiento",n:"Mantenimiento"},{id:"tsocial",n:"Trabajo social"}];
-function loadStaff(){try{return JSON.parse(localStorage.getItem("ed_staff")||"[]")}catch(e){return[]}}
-function saveStaff(a){localStorage.setItem("ed_staff",JSON.stringify(a.slice(0,80)))}
-function staffDept(){return localStorage.getItem("ed_dept")||"maestros"}
-function setDept(id){localStorage.setItem("ed_dept",id);equipo()}
-function postStaff(){
-  var ch=document.getElementById("stCh").value;
-  var tx=(document.getElementById("stTx").value||"").trim();
+
+var PUESTOS=[
+  {id:"dir",n:"Director",capa:1},
+  {id:"sub",n:"Subdirección",capa:1},
+  {id:"coord",n:"Coordinación académica",capa:2},
+  {id:"admin",n:"Administración",capa:2},
+  {id:"doc",n:"Docente",capa:3},
+  {id:"psi",n:"Psicología",capa:3},
+  {id:"pref",n:"Prefectura",capa:3},
+  {id:"secr",n:"Secretaría",capa:3},
+  {id:"enf",n:"Enfermería",capa:3},
+  {id:"seg",n:"Seguridad",capa:4},
+  {id:"int",n:"Intendencia",capa:4},
+  {id:"man",n:"Mantenimiento",capa:4}
+];
+/* quién puede escribir a quién (ids). padre se trata aparte */
+var CAN={
+  dir:["dir","sub","coord","admin","doc","psi","pref","secr","enf","seg","int","man","padre"],
+  sub:["dir","sub","coord","admin","doc","psi","pref","secr","seg","padre"],
+  coord:["dir","sub","coord","doc","psi","pref","secr","padre"],
+  admin:["dir","sub","admin","secr","int","man","padre"],
+  doc:["coord","doc","pref","psi","padre"],
+  psi:["dir","coord","doc","enf","padre"],
+  pref:["coord","doc","psi","pref","dir"],
+  secr:["dir","admin","coord","doc","padre"],
+  enf:["dir","psi","doc","seg","padre"],
+  seg:["dir","seg","enf","int"],
+  int:["admin","int","seg"],
+  man:["admin","man"]
+};
+function puesto(){return localStorage.getItem("ed_puesto")||"dir"}
+function setPuesto(id){localStorage.setItem("ed_puesto",id);equipo()}
+function loadMsg(){try{return JSON.parse(localStorage.getItem("ed_msg")||"[]")}catch(e){return[]}}
+function saveMsg(a){localStorage.setItem("ed_msg",JSON.stringify(a.slice(0,80)))}
+function loadTk(){try{return JSON.parse(localStorage.getItem("ed_tk")||"[]")}catch(e){return[]}}
+function saveTk(a){localStorage.setItem("ed_tk",JSON.stringify(a.slice(0,40)))}
+function nomP(id){var x=PUESTOS.filter(function(p){return p.id===id})[0];return x?x.n:(id==="padre"?"Padre / tutor":id)}
+function canTo(from,to){
+  if(from==="padre") return ["doc","coord","secr","admin"].indexOf(to)>=0;
+  return (CAN[from]||[]).indexOf(to)>=0;
+}
+function sendMsg(){
+  var to=document.getElementById("mTo").value;
+  var tx=(document.getElementById("mTx").value||"").trim();
+  var tipo=document.getElementById("mTipo").value;
+  var from=localStorage.getItem("ed_who")==="padre"?"padre":puesto();
   if(tx.length<2){toast("Escriba el recado");return}
-  var from=role==="dir"?"Dirección":role==="maestro"?"Maestro":role==="ori"?"Orientación":("Equipo · "+staffDept());
-  var a=loadStaff();
-  a.unshift({id:Date.now(),ch:ch,from:from,tx:tx,ts:Date.now()});
-  saveStaff(a);
-  toast("En la app. No salió a WhatsApp.");
+  if(!canTo(from,to) && !(tipo==="com" && from==="dir")){toast("Ese puesto no está en su directorio");return}
+  var a=loadMsg();
+  a.unshift({id:Date.now(),from:from,to:to,tipo:tipo,tx:tx,ts:Date.now(),read:0});
+  saveMsg(a);
+  toast(tipo==="com"?"Comunicado publicado":"En la app. No salió a WhatsApp.");
+  if(localStorage.getItem("ed_who")==="padre") padreInbox(); else equipo();
+}
+function visibleMsg(m){
+  var who=localStorage.getItem("ed_who");
+  if(who==="padre"){
+    return m.to==="padre" || m.from==="padre" || m.tipo==="com";
+  }
+  var me=puesto();
+  if(m.tipo==="com") return true;
+  return m.from===me || m.to===me || m.to==="todos";
+}
+function newTicket(){
+  var tx=(document.getElementById("tkTx").value||"").trim();
+  var pri=document.getElementById("tkPri").value;
+  if(tx.length<3){toast("Describa el problema");return}
+  var a=loadTk();
+  a.unshift({id:Date.now(),from:puesto(),tx:tx,pri:pri,st:"Nuevo",ts:Date.now()});
+  saveTk(a);
+  toast("Ticket a mantenimiento. No es un chat.");
   equipo();
 }
-function visibleStaff(m){
-  if(role==="dir")return true;
-  if(m.ch==="todos")return true;
-  if(role==="maestro")return m.ch==="maestros"||m.ch==="todos";
-  if(role==="ori")return m.ch==="tsocial"||m.ch==="todos";
-  return m.ch===staffDept()||m.ch==="todos";
+function setTk(id,st){
+  var a=loadTk().map(function(x){if(x.id===id)x.st=st;return x});
+  saveTk(a);equipo();
 }
-function equipo(){
-  var dept=staffDept();
-  var list=loadStaff().filter(visibleStaff);
-  var opts=DEPTS.map(function(d){return '<option value="'+d.id+'"'+(d.id==="todos"&&role!=="dir"?" disabled":"")+'>'+d.n+'</option>'}).join("");
-  var chips=DEPTS.filter(function(d){return d.id!=="todos"}).map(function(d){return '<button class="btn '+(dept===d.id?"blue":"line")+'" onclick="setDept(\''+d.id+'\')">'+d.n+'</button>'}).join("");
-  var html='<div class="card"><span class="pill ok">Solo personal</span><h2 style="margin-top:10px">Canal interno</h2><p class="muted">El director avisa a intendencia, maestros, seguridad, secretaría, portero, limpieza, mantenimiento y trabajo social. El padre no ve esto. WhatsApp se queda fuera.</p></div>';
-  if(role==="equipo"){
-    html+='<div class="card"><h2>Su área</h2>'+chips+'</div>';
-  }
-  html+='<div class="card"><h2>'+(role==="dir"?"Avisar al personal":"Recado al canal")+'</h2><select id="stCh">'+opts+'</select><textarea id="stTx" rows="3" placeholder="Hecho corto. Ej. Fuga en el baño de 2°. Cierren el patio norte. Junta 14:00 en secretaría."></textarea><button class="btn blue" onclick="postStaff()">Enviar en la app</button><p class="note">No se copia a padres. No es un grupo de WhatsApp.</p></div>';
-  html+='<div class="card"><h2>Recados</h2>';
-  if(!list.length) html+='<p class="muted">Nada aún. Dirección escribe el primero.</p>';
-  list.slice(0,20).forEach(function(m){
-    var nom=(DEPTS.filter(function(d){return d.id===m.ch})[0]||{n:m.ch}).n;
-    html+='<div class="ev"><div class="row"><b>'+m.from+'</b><span class="pill">'+nom+'</span></div><p class="muted" style="margin:4px 0 0">'+m.tx+'</p><p class="note">'+when(m.ts)+'</p></div>';
+function markRead(id){
+  var a=loadMsg().map(function(x){if(x.id===id)x.read=1;return x});
+  saveMsg(a);
+  if(localStorage.getItem("ed_who")==="padre") padreInbox(); else equipo();
+}
+function padreInbox(){
+  var list=loadMsg().filter(visibleMsg);
+  var opts=[["doc","Docente de Ana"],["coord","Coordinación"],["secr","Secretaría"],["admin","Administración"]].map(function(x){return '<option value="'+x[0]+'">'+x[1]+'</option>'}).join("");
+  var html='<div class="card"><span class="pill ok">Solo contactos autorizados</span><h2 style="margin-top:10px">Escribir a la escuela</h2><p class="muted">No hay intendencia, guardias ni otros padres. Si no se resuelve, escala: docente → coordinador → dirección.</p></div>';
+  html+='<div class="card"><select id="mTo">'+opts+'</select><input type="hidden" id="mTipo" value="priv"/><textarea id="mTx" rows="3" placeholder="Hecho corto. Fecha. Qué necesita."></textarea><button class="btn blue" onclick="sendMsg()">Enviar</button></div>';
+  html+='<div class="card"><h2>Bandeja</h2>';
+  if(!list.length) html+='<p class="muted">Sin recados. Los comunicados oficiales aparecen aquí.</p>';
+  list.slice(0,15).forEach(function(m){
+    html+='<div class="ev"><div class="row"><b>'+nomP(m.from)+' → '+nomP(m.to)+'</b><span class="pill">'+(m.tipo==="com"?"Comunicado":"Privado")+'</span></div><p class="muted" style="margin:4px 0 0">'+m.tx+'</p><p class="note">'+when(m.ts)+(m.read?" · leído":"")+'</p>'+(m.read?"":'<button class="btn line" onclick="markRead('+m.id+')">Confirmar lectura</button>')+'</div>';
   });
   html+='</div>';
   document.getElementById("v").innerHTML=html;
+}
+function equipo(){
+  var me=puesto();
+  var dest=(CAN[me]||[]).map(function(id){return '<option value="'+id+'">'+nomP(id)+'</option>'}).join("");
+  var chips=PUESTOS.map(function(p){return '<button class="btn '+(me===p.id?"blue":"line")+'" style="font-size:.75rem" onclick="setPuesto(\''+p.id+'\')">'+p.n+'</button>'}).join("");
+  var list=loadMsg().filter(visibleMsg);
+  var tks=loadTk();
+  var html='<div class="card"><span class="pill ok">No es WhatsApp</span><h2 style="margin-top:10px">'+nomP(me)+'</h2><p class="muted">Solo ve a quien su puesto puede hablar. Intendencia no ve padres. Psicología no se filtra al grupo general.</p></div>';
+  html+='<div class="card"><h2>Su puesto (demo)</h2>'+chips+'</div>';
+  html+='<div class="card"><h2>Directorio permitido</h2><p class="muted">'+(CAN[me]||[]).map(nomP).join(" · ")+'</p></div>';
+  html+='<div class="card"><h2>Nuevo recado</h2><select id="mTipo"><option value="priv">Privado</option>'+(me==="dir"||me==="sub"||me==="coord"||me==="secr"||me==="admin"?'<option value="com">Comunicado oficial (no es chat)</option>':'')+'</select><select id="mTo">'+dest+'</select><textarea id="mTx" rows="3" placeholder="Hecho. Lugar. Qué hay que hacer."></textarea><button class="btn blue" onclick="sendMsg()">Enviar en la app</button></div>';
+  html+='<div class="card"><h2>Ticket de mantenimiento / limpieza</h2><select id="tkPri"><option>Normal</option><option>Urgente</option></select><textarea id="tkTx" rows="2" placeholder="Salón 204 · fuga · planta baja"></textarea><button class="btn line" onclick="newTicket()">Crear ticket</button></div>';
+  if(me==="man"||me==="int"||me==="admin"||me==="dir"){
+    html+='<div class="card"><h2>Tickets</h2>';
+    if(!tks.length) html+='<p class="muted">Nada abierto.</p>';
+    tks.forEach(function(k){
+      html+='<div class="ev"><div class="row"><b>#'+String(k.id).slice(-4)+' · '+k.pri+'</b><span class="pill">'+k.st+'</span></div><p class="muted">'+k.tx+' · '+nomP(k.from)+'</p>';
+      if(me==="man"||me==="admin"||me==="dir") html+='<div class="grid2"><button class="btn line" onclick="setTk('+k.id+',\'En proceso\')">En proceso</button><button class="btn blue" onclick="setTk('+k.id+',\'Cerrado\')">Cerrar</button></div>';
+      html+='</div>';
+    });
+    html+='</div>';
+  }
+  html+='<div class="card"><h2>Bandeja</h2>';
+  if(!list.length) html+='<p class="muted">Vacía. El director manda el primer comunicado o recado.</p>';
+  list.slice(0,20).forEach(function(m){
+    html+='<div class="ev"><div class="row"><b>'+nomP(m.from)+' → '+nomP(m.to)+'</b><span class="pill">'+(m.tipo==="com"?"Comunicado":"Privado")+'</span></div><p class="muted" style="margin:4px 0 0">'+m.tx+'</p><p class="note">'+when(m.ts)+(m.read?" · leído":"")+'</p>'+(m.read?"":'<button class="btn line" onclick="markRead('+m.id+')">Confirmar lectura</button>')+'</div>';
+  });
+  html+='</div>';
+  document.getElementById("v").innerHTML=html;
+}
+function labAdic(){
+  if(!plusOn())return plusPay();
+  document.getElementById("v").innerHTML=
+    '<div class="card"><span class="lock">PLUS</span><h2 style="margin-top:10px">Laboratorio de adicciones</h2><p class="muted">Enfermedad tratable. No es “vicio”. No diagnostica.</p></div>'+
+    '<div class="card"><h2>Sustancias y conductas</h2><p class="muted">Alcohol · marihuana · vape · pastillas · inhalantes · pantallas · juego · apuestas. Señale lo que sí está pasando. No interrogue 24/7.</p></div>'+
+    '<div class="card"><h2>Camino</h2><p class="muted">1. Prueba. 2. “Ya no me hace el mismo efecto” (tolerancia). 3. No puede parar (compulsión). 4. Sigue aunque pierda escuela, salud o familia.</p></div>'+
+    '<div class="card"><h2>Ojos y cuerpo (observar, no diagnosticar)</h2><p class="muted">Ojos rojos o vidriosos; pupilas muy grandes o muy chicas; ojeras nuevas; olor en ropa o aliento; pérdida o subida de peso; sueño al revés. Una señal sola no prueba consumo. Varias + mentiras de dónde estuvo + dinero que falta sí piden evaluación.</p></div>'+
+    '<div class="card"><h2>Las 3 C</h2><p class="muted">Usted no causó esto. No lo controla solo. No lo cura solo. Apoyar no es cubrir la consecuencia.</p></div>'+
+    '<div class="card"><h2>Hoy</h2><p class="muted">1. 10 min desde la preocupación, sin la palabra adicto.<br/>2. Anote 3 días: qué, cuándo, con quién.<br/>3. Quite el acceso fácil UNA vez. Agenda evaluación. No espere “tocar fondo”.</p></div>'+
+    '<button class="btn danger" onclick="crisis()">Si hay intoxicación o desmayo</button>'+
+    '<button class="btn line" onclick="casa()">Volver</button>';
+}
+function ojosDepre(){
+  document.getElementById("v").innerHTML=
+    '<div class="card"><span class="pill">Orientativo</span><h2 style="margin-top:10px">Mirada y ánimo</h2><p class="muted">No lee la mente ni diagnostica depresión. Marque lo que ve últimamente, casi todos los días, por más de 2 semanas.</p></div>'+
+    '<div class="card" id="ojBox">'+
+    ["Mirada apagada, como si no estuviera.",
+     "Evita el contacto visual o mira al piso.",
+     "Ojeras o cara cansada aunque duerma.",
+     "Sonríe poco o la sonrisa no llega a los ojos.",
+     "Dejó de disfrutar lo que antes sí.",
+     "Se aísla o dice que no le importa a nadie.",
+     "Duerme mucho más o casi nada.",
+     "Bajan las notas o deja de ir."].map(function(q,i){return '<label class="muted" style="display:block;margin:8px 0"><input type="checkbox" id="oj'+i+'"/> '+q+'</label>'}).join("")+
+    '</div>'+
+    '<button class="btn blue" onclick="ojosScore()">Ver semáforo</button>'+
+    '<button class="btn line" onclick="casa()">Volver</button>';
+}
+function ojosScore(){
+  var n=0; for(var i=0;i<8;i++){ if(document.getElementById("oj"+i).checked) n++; }
+  var msg=n<=2?"Verde: siga el contacto diario y los 3 de hoy. Si algo empeora, vuelva a marcar.":n<=5?"Amarillo: agenda un profesional esta semana. 10 min juntos sin exigirle ánimo.":"Rojo: no es diagnóstico, pero hay varias señales juntas. Crisis si hay daño. Profesional ya.";
+  var col=n<=2?"ok":n<=5?"warn":"bad";
+  document.getElementById("v").innerHTML='<div class="card"><span class="pill '+col+'">'+n+' de 8</span><h2 style="margin-top:10px">Semáforo</h2><p class="muted">'+msg+'</p></div><button class="btn danger" onclick="crisis()">Necesito ayuda ya</button><a class="btn green" href="'+ALMA+'">Profesional</a><button class="btn line" onclick="ojosDepre()">Repetir</button>';
+}
+function plan7(){
+  if(!plusOn())return plusPay();
+  document.getElementById("v").innerHTML=
+    '<div class="card"><span class="lock">PLUS</span><h2 style="margin-top:10px">Plan 7 días</h2><p class="muted">Un solo foco. No un manual.</p></div>'+
+    '<div class="card"><p class="muted">Día 1: 10 min sin pantallas.<br/>Día 2: una pregunta abierta.<br/>Día 3: anote 1 hecho (escuela o casa).<br/>Día 4: un límite escrito.<br/>Día 5: 10 min para usted.<br/>Día 6: mensaje a la escuela con hechos, no con enojo.<br/>Día 7: decida si hay profesional esta semana.</p></div>'+
+    '<button class="btn line" onclick="casa()">Volver</button>';
 }
 
 function casa(){
@@ -469,6 +656,10 @@ function casa(){
   });
   html+='</div>';
   html+='<div class="card"><h2>Edad</h2><div class="grid2">'+["6-11","12-15","15-18","18+"].map(function(e){return '<button class="btn '+(f.edad===e?"blue":"line")+'" onclick="setEdad(\''+e+'\')">'+e+'</button>'}).join("")+'</div></div>';
+  html+='<button class="btn line" onclick="ojosDepre()">Mirada y ánimo (no diagnostica)</button>';
+  html+='<button class="btn line" onclick="labAdic()">Laboratorio de adicciones · $14.99</button>';
+  html+='<button class="btn line" onclick="plan7()">Plan 7 días · Plus</button>';
+  html+='<button class="btn line" onclick="plusOn()?toast(\'Plus ya activo\'):plusPay()">Plus $14.99 / mes</button>';
   html+='<button class="btn line" onclick="evalRapida()">Evaluación rápida (no diagnostica)</button>';
   html+='<a class="btn line" href="'+ALERTA+'">Abrir Alerta completa</a>';
   html+='<p class="note">En peligro real: 911 · 800 911 2000 · SAPTEL 55 5259 8121 · 988 si estás en EE.UU.</p>';
@@ -521,7 +712,7 @@ function evalRapida(){
 function verSemaforo(){
   var n=0;for(var i=0;i<7;i++)if(document.getElementById("eq"+i).checked)n++;
   var msg=n>=5?"Rojo orientativo: Crisis + profesional esta semana. No es un diagnóstico.":n>=3?"Ámbar: activa un tema, haz los 3 de hoy, agenda un profesional si no baja.":"Verde orientativo: sigue los 3 de hoy y abre comunicación. Vigila.";
-  document.getElementById("v").innerHTML='<div class="card"><h2>Resultado</h2><p class="muted">'+n+' de 7. '+msg+'</p><button class="btn danger" onclick="crisis()">Abrir Crisis</button><a class="btn green" href="'+ALMA+'">Alma</a><button class="btn line" onclick="casa()">En casa</button></div>';
+  document.getElementById("v").innerHTML='<div class="card"><h2>Resultado</h2><p class="muted">'+n+' de 7. '+msg+'</p><button class="btn danger" onclick="crisis()">Abrir Crisis</button><a class="btn green" href="'+ALMA+'">Hablar con un profesional</a><button class="btn line" onclick="casa()">En casa</button></div>';
 }
 function mas(){
   document.getElementById("v").innerHTML=
@@ -534,7 +725,7 @@ function mas(){
     '<div class="card"><h2>Qué no es</h2><p class="muted">No es red social. No vigila. No diagnostica. No reemplaza al maestro ni al psicólogo.</p></div>'+
     '<div class="card"><h2>Quién paga</h2><p class="muted">Escuela $0. Canal: $99 / $20 / $50. Crisis de En casa nunca se cobra.</p></div>'+
     '<div class="card"><h2>Esta familia y la IA</h2><p class="muted">Detección opcional, agosto 2026. Usted la apaga. Nadie le manda un IRE.</p><button class="btn line" onclick="toast(\'IA familiar APAGADA en este celular\')">Apagar detección para mi hijo</button></div>'+
-    '<a class="btn green" href="'+ALMA+'">Alma</a>'+
+    '<a class="btn green" href="'+ALMA+'">Hablar con un profesional</a>'+
     '<a class="btn line" href="'+ALERTA+'">Alerta completa</a>'+
     '<a class="btn line" href="colegio-web.html">Web del colegio</a>'+
     '<a class="btn line" href="index-digna.html">Ecosistema</a>'+
