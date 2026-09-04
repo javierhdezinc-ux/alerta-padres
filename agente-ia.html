@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Mi Agente IA · Enseñanza Digna</title>
+<style>
+body{margin:0;font-family:-apple-system,sans-serif;background:#F3EEE4;color:#1A202C;line-height:1.45}
+.wrap{max-width:720px;margin:0 auto;padding:20px 16px 40px}
+h1{color:#0F3D75;font-size:1.4rem;margin:0 0 8px}
+h2{color:#0F3D75;font-size:1.05rem}
+.card{background:#fff;border-radius:16px;padding:16px;margin:12px 0}
+.muted{color:#4A5568}
+.k{letter-spacing:.12em;font-size:.7rem;color:#4A5568}
+a.btn{display:block;text-align:center;background:#0F3D75;color:#fff;text-decoration:none;padding:14px;border-radius:14px;font-weight:700}
+.warn{background:#FFFAF0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<p class="k">Enseñanza Digna</p>
+<h1>Mi asistente para el docente</h1>
+<p class="muted">El maestro no aprende IA. La IA le arma la clase, el examen y el aviso. Él revisa. Nada sensible se envía solo.</p>
+<a class="btn" href="app.html">Probar en la app</a>
+
+<div class="card">
+<h2>Quién lo ve</h2>
+<p class="muted">Docente, coordinación, dirección, subdirección. No padres. No intendencia. No seguridad. No un chatbot para toda la escuela.</p>
+</div>
+<div class="card">
+<h2>Qué hace hoy (demo)</h2>
+<p class="muted">Preparar clase 50 min · actividad 3 niveles · examen + versión B · papeleo · aviso a casa (aprobar) · «Ayúdame» si está atrasado.</p>
+</div>
+<div class="card warn">
+<h2>Qué no prometemos ahora</h2>
+<p class="muted">No hay router multi-modelo en GitHub Pages. No hay RAG del currículo oficial hasta que la escuela cargue documentos y haya servidor. La demo usa plantillas. El maestro ya siente el flujo: pedir → borrador → editar → guardar / aprobar.</p>
+</div>
+<div class="card">
+<h2>Arquitectura cuando sí hay servidor</h2>
+<p class="muted">App → API de la escuela (tenant) → orquestador: tarea simple = modelo chico y barato; planeación o examen = modelo más capaz; dato de alumno = solo si el docente tiene ese grupo; psicología = el agente docente no la lee. Fallback a otro proveedor si uno cae. El maestro no ve el nombre del modelo.</p>
+</div>
+<div class="card">
+<h2>Costo (supuestos, no factura)</h2>
+<p class="muted">Escuela 500 alumnos ≈ 30 docentes. Uso normal ~40 tareas/docente/mes, mayoría plantillas y modelo chico. Meta $2,000 MXN/mes de cómputo por escuela es posible solo con caché, modelos pequeños en el 80% y un modelo caro en el 20%. Si todos piden exámenes largos todos los días, se pasa. El maestro sigue en $0. La escuela no paga el agente en el piloto de canal; la IA se enciende con contrato y techo.</p>
+</div>
+<div class="card">
+<h2>Ética</h2>
+<p class="muted">No vigilar al maestro. El director ve adopción (cuántos usaron el asistente), no el texto de sus clases. No vender datos. Mensaje a padres: humano aprueba.</p>
+</div>
+</div>
+</body>
+</html>
