@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Avisos oficiales — Enseñanza Digna</title>
+<style>
+:root{--n:#0b1f3a;--o:#c9a227;--ok:#2d6a4f;--mal:#8b1e1e;--bg:#f4efe4}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#1a1a1a}
+header{background:var(--n);color:#fff;padding:16px 18px 14px}
+header h1{margin:0;font-size:18px}
+header p{margin:6px 0 0;font-size:13px;opacity:.85}
+.wrap{padding:14px;max-width:520px;margin:0 auto}
+.card{background:#fff;border-radius:16px;padding:14px;margin:0 0 12px;box-shadow:0 8px 24px #0001}
+.pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;padding:4px 8px;border-radius:99px}
+.a{background:#fde8e8;color:var(--mal)}
+.c{background:#fff3d6;color:#7a4d00}
+.f{background:#e4f5ea;color:var(--ok)}
+button{width:100%;border:0;border-radius:14px;padding:14px;font-size:16px;font-weight:700;margin-top:8px}
+.btn{background:var(--n);color:#fff}
+.gold{background:var(--o);color:#1a1a1a}
+.line{background:#fff;border:2px solid var(--n);color:var(--n)}
+.okb{background:var(--ok);color:#fff}
+.warn{background:var(--mal);color:#fff}
+input,select,textarea{width:100%;padding:12px;border:1px solid #d9d0b8;border-radius:12px;font-size:16px;margin:6px 0}
+.muted{color:#666;font-size:13px;line-height:1.4}
+.row{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#555}
+.nom{font-size:22px;color:var(--n);margin:8px 0}
+.lock{min-height:60vh;display:flex;flex-direction:column;justify-content:center}
+</style>
+</head>
+<body>
+<header>
+  <h1>Avisos oficiales</h1>
+  <p>Se confirman con el nombre. No se borran. PDF del mes para padre y para maestro.</p>
+</header>
+<div class="wrap" id="app"></div>
+<script>
+const KEY="ed_avisos_oficiales";
+const PINKEY="ed_pin_tutor";
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){return[]}}
+function save(a){localStorage.setItem(KEY,JSON.stringify(a))}
+function uid(){return "A"+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function fmt(t){return new Date(t).toLocaleString("es-MX",{dateStyle:"short",timeStyle:"short"})}
+function mesActual(arr){
+  const now=new Date(), m=now.getMonth(), y=now.getFullYear();
+  return arr.filter(x=>{const d=new Date(x.ts);return d.getMonth()===m&&d.getFullYear()===y});
+}
+function labelTipo(t){
+  return t==="asistencia"?"ASISTENCIA":t==="felicitacion"?"FELICITACIÓN":"CONDUCTA";
+}
+
+function seedSiVacio(){
+  if(load().length) return;
+  const now=Date.now();
+  save([
+    {id:uid(),tipo:"asistencia",alumno:"Ana Pérez",materia:"Matemáticas",maestro:"Mtra. López",grado:"2° sec",hecho:"No ingresó a 2ª hora",ts:now-3600e3,visto:null,anulado:false},
+    {id:uid(),tipo:"conducta",alumno:"Luis Mora",materia:"Español",maestro:"Prof. Ruiz",grado:"2° sec",hecho:"Interrumpió la clase de forma reiterada",ts:now-7200e3,visto:null,anulado:false},
+    {id:uid(),tipo:"felicitacion",alumno:"Ana Pérez",materia:"Ciencias",maestro:"Mtra. Solís",grado:"2° sec",hecho:"Explicó el tema a un compañero",ts:now-864e5,visto:null,anulado:false}
+  ]);
+}
+
+function pinOk(){return sessionStorage.getItem("ed_tutor_ok")==="1"}
+function pedirPin(){
+  document.getElementById("app").innerHTML=`
+  <div class="card lock">
+    <h2>PIN del tutor o del maestro</h2>
+    <p class="muted">El alumno no entra aquí. El primer PIN que ponga queda en este celular.</p>
+    <input id="pin" type="password" inputmode="numeric" maxlength="6" placeholder="PIN de 4 a 6 números">
+    <button class="btn" onclick="entrarPin()">Entrar</button>
+  </div>`;
+}
+function entrarPin(){
+  const p=(document.getElementById("pin").value||"").trim();
+  if(p.length<4){alert("PIN de 4 a 6 números");return}
+  const saved=localStorage.getItem(PINKEY);
+  if(!saved){localStorage.setItem(PINKEY,p)}
+  else if(saved!==p){alert("PIN incorrecto");return}
+  sessionStorage.setItem("ed_tutor_ok","1");inicio();
+}
+
+function inicio(){
+  seedSiVacio();
+  document.getElementById("app").innerHTML=`
+  <div class="card">
+    <h2>¿Quién es usted?</h2>
+    <button class="btn" onclick="padre()">Soy padre / tutor</button>
+    <button class="gold" onclick="alta()">Soy maestro · cargar aviso</button>
+    <button class="line" onclick="pdfPadre()">PDF del mes · padre</button>
+    <button class="line" onclick="pdfMaestro()">PDF del mes · maestro (por alumno)</button>
+    <p class="muted">GitHub no puede enviar el correo solo. El día 1 toque los dos PDF, Imprimir → Guardar como PDF y mándelos. En la plataforma v1 eso sale automático al correo.</p>
+  </div>`;
+}
+
+function padre(){
+  const a=load().slice().sort((x,y)=>y.ts-x.ts);
+  let html=`<div class="card"><button class="line" onclick="inicio()">← Inicio</button>
+  <p class="muted">No hay borrar. Marque Ya lo vi.</p>
+  <button class="gold" onclick="pdfPadre()">PDF de este mes</button></div>`;
+  a.forEach(x=>{
+    const cls=x.tipo==="asistencia"?"a":x.tipo==="felicitacion"?"f":"c";
+    html+=`<div class="card">
+      <span class="pill ${cls}">${labelTipo(x.tipo)}</span>
+      ${x.anulado?' <span class="pill c">ANULADO</span>':''}
+      <p class="nom">${x.alumno}</p>
+      <p>${x.hecho}</p>
+      <div class="row"><span>${x.maestro} · ${x.materia||"—"}</span><span>${fmt(x.ts)}</span></div>
+      <p class="muted">${x.visto?"Visto: "+fmt(x.visto):"Aún no lo marca"}</p>
+      ${x.visto||x.anulado?"":`<button class="okb" onclick="visto('${x.id}')">Ya lo vi</button>`}
+    </div>`;
+  });
+  document.getElementById("app").innerHTML=html;
+}
+function visto(id){
+  save(load().map(x=>x.id===id?{...x,visto:Date.now()}:x));
+  padre();
+}
+
+function alta(){
+  document.getElementById("app").innerHTML=`
+  <div class="card">
+    <button class="line" onclick="inicio()">← Inicio</button>
+    <h2>Cargar aviso</h2>
+    <select id="tipo">
+      <option value="asistencia">Asistencia</option>
+      <option value="conducta">Conducta</option>
+      <option value="felicitacion">Felicitación</option>
+    </select>
+    <input id="alumno" placeholder="Nombre COMPLETO del alumno">
+    <input id="grado" placeholder="Grado">
+    <input id="materia" placeholder="Materia">
+    <input id="maestro" placeholder="Su nombre (maestro)">
+    <textarea id="hecho" rows="3" placeholder="Hecho observable"></textarea>
+    <button class="btn" onclick="confirmar()">Revisar nombre antes de enviar</button>
+  </div>`;
+}
+
+function confirmar(){
+  const d={
+    tipo:document.getElementById("tipo").value,
+    alumno:document.getElementById("alumno").value.trim(),
+    grado:document.getElementById("grado").value.trim(),
+    materia:document.getElementById("materia").value.trim(),
+    maestro:document.getElementById("maestro").value.trim(),
+    hecho:document.getElementById("hecho").value.trim()
+  };
+  if(!d.alumno||!d.maestro||!d.hecho){alert("Faltan alumno, maestro o el hecho");return}
+  window._pendiente=d;
+  document.getElementById("app").innerHTML=`
+  <div class="card">
+    <h2>¿Es este alumno?</h2>
+    <p class="nom">${d.alumno}</p>
+    <p><strong>${labelTipo(d.tipo)}</strong> · ${d.materia||"sin materia"} · ${d.grado||""}</p>
+    <p>${d.hecho}</p>
+    <p class="muted">Si el nombre está mal, no lo mande. El aviso no se puede borrar.</p>
+    <button class="okb" onclick="enviarConfirmado()">Sí, es ${d.alumno}. Enviar</button>
+    <button class="warn" onclick="alta()">No, me equivoco</button>
+  </div>`;
+}
+
+function enviarConfirmado(){
+  const d=window._pendiente;
+  if(!d){alta();return}
+  const a=load();
+  a.unshift({id:uid(),...d,ts:Date.now(),visto:null,anulado:false});
+  save(a);
+  document.getElementById("app").innerHTML=`
+  <div class="card">
+    <h2>Enviado</h2>
+    <p>Aviso oficial de <strong>${d.alumno}</strong> quedó registrado. El padre marca Ya lo vi. Usted no lo borra.</p>
+    <button class="btn" onclick="alta()">Otro aviso</button>
+    <button class="line" onclick="inicio()">Inicio</button>
+  </div>`;
+}
+
+function tabla(arr){
+  return `<table><tr><th>Fecha</th><th>Alumno</th><th>Maestro</th><th>Materia</th><th>Tipo</th><th>Hecho</th><th>Ya lo vi</th></tr>`+
+    (arr.map(x=>`<tr><td>${fmt(x.ts)}</td><td>${x.alumno}</td><td>${x.maestro}</td><td>${x.materia||"—"}</td><td>${labelTipo(x.tipo)}</td><td>${x.hecho}${x.anulado?" [ANULADO]":""}</td><td>${x.visto?fmt(x.visto):"No"}</td></tr>`).join("")||`<tr><td colspan="7">Ninguno</td></tr>`)+
+    `</table>`;
+}
+
+function abrirPdf(titulo,cuerpo){
+  const w=window.open("","pdf");
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${titulo}</title>
+  <style>body{font-family:Arial;padding:24px}h1{font-size:18px}h2{font-size:15px;margin-top:22px}
+  table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #ccc;padding:6px;text-align:left}
+  th{background:#0b1f3a;color:#fff}</style></head><body>
+  <p>ENSEÑANZA DIGNA · AVISOS OFICIALES</p>
+  <h1>${titulo}</h1>
+  ${cuerpo}
+  <p style="font-size:12px;color:#555">Piloto: Imprimir → Guardar como PDF → correo. En v1 se envía solo el día 1.</p>
+  <script>window.onload=()=>window.print()<\/script></body></html>`);
+  w.document.close();
+}
+
+function pdfPadre(){
+  const now=new Date();
+  const a=mesActual(load());
+  const tit=`Resumen para el padre · ${now.toLocaleDateString("es-MX",{month:"long",year:"numeric"})}`;
+  abrirPdf(tit,
+    `<p>Asistencia, conducta y felicitaciones. No se borran desde la app.</p>
+     <h2>Asistencia</h2>${tabla(a.filter(x=>x.tipo==="asistencia"))}
+     <h2>Conducta</h2>${tabla(a.filter(x=>x.tipo==="conducta"))}
+     <h2>Felicitaciones</h2>${tabla(a.filter(x=>x.tipo==="felicitacion"))}`);
+}
+
+function pdfMaestro(){
+  const now=new Date();
+  const a=mesActual(load());
+  const nombres=[...new Set(a.map(x=>x.alumno))].sort();
+  let cuerpo=`<p>Relación del mes por alumno: faltas, conducta y felicitaciones.</p>`;
+  if(!nombres.length) cuerpo+=`<p>Sin avisos este mes.</p>`;
+  nombres.forEach(n=>{
+    const de=a.filter(x=>x.alumno===n);
+    const na=de.filter(x=>x.tipo==="asistencia").length;
+    const nc=de.filter(x=>x.tipo==="conducta").length;
+    const nf=de.filter(x=>x.tipo==="felicitacion").length;
+    cuerpo+=`<h2>${n} · ${na} asistencia · ${nc} conducta · ${nf} felicitación</h2>${tabla(de)}`;
+  });
+  abrirPdf(`PDF maestro por alumno · ${now.toLocaleDateString("es-MX",{month:"long",year:"numeric"})}`,cuerpo);
+}
+
+if(!pinOk()) pedirPin(); else inicio();
+</script>
+</body>
+</html>
