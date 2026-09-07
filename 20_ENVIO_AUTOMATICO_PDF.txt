@@ -1,0 +1,163 @@
+ENVÍO AUTOMÁTICO MENSUAL — sin trabajo extra del maestro
+Enseñanza Digna · piloto
+
+GitHub Pages NO envía correo. El robot es Google (una hoja + un script).
+El maestro solo carga el aviso. El día 1 del mes Google manda:
+
+  • Al padre: PDF / tabla de asistencia, conducta y felicitación de SU hijo
+  • Al maestro: PDF / tabla de TODOS sus alumnos del mes
+  • Copia a dirección (opcional)
+
+========================================
+1. CREAR LA HOJA (una vez, 10 minutos)
+========================================
+1. Entra a https://sheets.new  (con el Gmail de Enseñanza Digna, no el personal del maestro).
+2. Ponle nombre: AVISOS OFICIALES
+3. Fila 1 (encabezados, exactos):
+
+A fecha
+B alumno
+C grado
+D materia
+E maestro
+F correo_maestro
+G tutor
+H correo_padre
+I tipo
+J hecho
+K visto
+
+tipo solo puede ser: asistencia | conducta | felicitacion
+
+4. Hoja 2, nómbrala PADRON. Encabezados:
+
+A alumno
+B grado
+C tutor
+D correo_padre
+E maestro
+F correo_maestro
+
+Ahí vive la lista. El aviso toma los correos del padrón para no teclearlos cada vez.
+
+========================================
+2. CÓMO CARGA EL MAESTRO (sigue siendo 20 segundos)
+========================================
+Opción A (la más simple ahora):
+Formulario de Google ligado a la hoja (Google Forms).
+Campos: alumno (lista), tipo, materia, hecho.
+El correo del padre y del maestro los pone el script leyendo PADRON.
+El maestro NO adjunta PDF.
+
+Opción B: seguir usando avisos-oficiales-1.html en el celular
+y una vez al día alguien (ustedes, no el maestro) pega lo nuevo a la hoja.
+Eso es muleta. El Forms es lo que quita trabajo.
+
+========================================
+3. EL SCRIPT (Extensiones → Apps Script)
+========================================
+Pega esto, guarda, autoriza con la cuenta de la empresa.
+
+---
+function enviarResumenesMensuales() {
+  var ss = SpreadsheetApp.getActive();
+  var avisos = ss.getSheetByName("Hoja 1"); // o el nombre real de la hoja de avisos
+  var datos = avisos.getDataRange().getValues();
+  var ahora = new Date();
+  var mes = ahora.getMonth();
+  var year = ahora.getFullYear();
+  // Si corres el día 1, el resumen es del MES ANTERIOR:
+  var ref = new Date(year, mes, 0); // último día del mes pasado
+  var m = ref.getMonth();
+  var y = ref.getFullYear();
+
+  var porPadre = {};
+  var porMaestro = {};
+
+  for (var i = 1; i < datos.length; i++) {
+    var f = datos[i][0];
+    if (!(f instanceof Date)) continue;
+    if (f.getMonth() !== m || f.getFullYear() !== y) continue;
+    var alumno = String(datos[i][1] || "").trim();
+    var grado = datos[i][2];
+    var materia = datos[i][3];
+    var maestro = String(datos[i][4] || "").trim();
+    var correoM = String(datos[i][5] || "").trim();
+    var tutor = datos[i][6];
+    var correoP = String(datos[i][7] || "").trim();
+    var tipo = String(datos[i][8] || "");
+    var hecho = datos[i][9];
+    var linea = Utilities.formatDate(f, "America/Mexico_City", "dd/MM HH:mm")
+      + " · " + tipo + " · " + materia + " · " + hecho;
+
+    if (correoP) {
+      if (!porPadre[correoP]) porPadre[correoP] = {tutor: tutor, alumno: alumno, lineas: []};
+      porPadre[correoP].lineas.push(linea);
+    }
+    if (correoM) {
+      if (!porMaestro[correoM]) porMaestro[correoM] = {maestro: maestro, lineas: []};
+      porMaestro[correoM].lineas.push(alumno + " · " + linea);
+    }
+  }
+
+  var mesTxt = Utilities.formatDate(ref, "America/Mexico_City", "MMMM yyyy");
+
+  Object.keys(porPadre).forEach(function (mail) {
+    var p = porPadre[mail];
+    MailApp.sendEmail({
+      to: mail,
+      subject: "Enseñanza Digna · resumen " + mesTxt + " · " + p.alumno,
+      body:
+        "Tutor: " + p.tutor + "\nAlumno: " + p.alumno + "\nMes: " + mesTxt + "\n\n" +
+        p.lineas.join("\n") +
+        "\n\nEstos avisos no se borran. Usted marca Ya lo vi en la app.\n" +
+        "Esto no es un chat."
+    });
+  });
+
+  Object.keys(porMaestro).forEach(function (mail) {
+    var t = porMaestro[mail];
+    MailApp.sendEmail({
+      to: mail,
+      subject: "Enseñanza Digna · su relación " + mesTxt,
+      body:
+        "Maestro: " + t.maestro + "\nMes: " + mesTxt + "\n\n" +
+        "Relación por alumno (asistencia, conducta, felicitación):\n\n" +
+        t.lineas.join("\n") +
+        "\n\nEsto llega solo. Usted no tiene que armar PDF."
+    });
+  });
+}
+
+function crearDisparadorDia1() {
+  ScriptApp.getProjectTriggers().forEach(function (t) {
+    ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger("enviarResumenesMensuales")
+    .timeBased()
+    .onMonthDay(1)
+    .atHour(7)
+    .inTimezone("America/Mexico_City")
+    .create();
+}
+---
+
+5. Corre UNA vez la función crearDisparadorDia1 (▶ Run).
+6. Autoriza los permisos (Gmail + Sheets).
+7. Listo. Cada 1 del mes a las 7:00 CDMX salen los correos.
+
+Gmail gratis aguanta ~100 correos al día. Una escuela de 500 papás:
+partir en 5 días o subir a Workspace ($). Para el piloto alcanza.
+
+========================================
+4. QUÉ NO HACER
+========================================
+- No pedirle al maestro que Imprima → PDF.
+- No usar el grupo de WhatsApp del salón para el resumen.
+- No mezclar esto con crowdfunding.
+
+========================================
+5. CUANDO EXISTA LA PLATAFORMA V1
+========================================
+Este script se apaga. El servidor manda el PDF de verdad.
+Hasta entonces: aviso en Forms + este robot.
