@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Papeleo del staff — Enseñanza Digna</title>
+<style>
+:root{--n:#0b1f3a;--o:#c9a227;--bg:#f4efe4}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#1a1a1a}
+header{background:var(--n);color:#fff;padding:16px}
+h1{margin:0;font-size:18px}
+header p{margin:6px 0 0;font-size:13px;opacity:.9}
+.wrap{max-width:560px;margin:0 auto;padding:14px}
+.card{background:#fff;border-radius:16px;padding:14px;margin:0 0 12px;box-shadow:0 8px 20px #0001}
+button,.chip{border:0;border-radius:14px;padding:12px;font-size:14px;font-weight:700;width:100%;margin:5px 0;text-align:left}
+.chip{background:#eef2f7;color:var(--n)}
+.btn{background:var(--n);color:#fff;text-align:center}
+.gold{background:var(--o);color:#1a1a1a;text-align:center}
+.line{background:#fff;border:2px solid var(--n);color:var(--n);text-align:center}
+textarea{width:100%;padding:12px;border:1px solid #d7ccb4;border-radius:12px;font-size:16px}
+.muted{color:#666;font-size:13px;line-height:1.4}
+pre{white-space:pre-wrap;font-family:Georgia,serif;font-size:15px;line-height:1.45;background:#faf7f0;padding:12px;border-radius:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid button{margin:0;text-align:center;min-height:58px;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Papeleo del staff</h1>
+  <p>Quien abre la puerta, limpia, vigila o cobra. Un recado listo. No consulta clínica.</p>
+</header>
+<div class="wrap" id="app"></div>
+<script>
+const ROLES={
+  port:{nom:"Portería",intro:"Quién entra y sale. Bitácora, no discusión con el padre.",
+    botones:[["visita","Pase de visitante"],["retiro","Alumno que se retira temprano"],["proveedor","Proveedor en puerta"],["cierre","Cierre de caseta (fin de día)"]]},
+  seg:{nom:"Seguridad",intro:"Hechos, horarios, a quién avisar. Sin héroes.",
+    botones:[["incidente","Reporte de incidente"],["ronda","Bitácora de ronda"],["simulacro","Roles en simulacro"],["extravio","Objeto / credencial extraviada"]]},
+  int:{nom:"Intendencia / limpieza",intro:"Piso, baño, material. Orden de trabajo, no queja suelta.",
+    botones:[["orden","Orden de limpieza urgente"],["insumos","Pedido de insumos"],["dano","Reporte de daño en aula o baño"],["turno","Entrega de turno"]]},
+  man:{nom:"Mantenimiento",intro:"Se descompuso X. Prioridad y quién autoriza.",
+    botones:[["falla","Reporte de falla"],["preventivo","Ronda preventiva de la semana"],["refaccion","Pedido de refacción"],["cierre_ot","Cerrar orden de trabajo"]]},
+  pre:{nom:"Prefectura / disciplina",intro:"Hecho observable. No sentencia. El aviso al padre sale por el canal oficial.",
+    botones:[["hecho","Nota de hecho en pasillo / receso"],["atraso","Lista de retardos del día"],["recreo","Incidente de recreo (hechos)"],["pase","Pase de baño / cubículo"]]},
+  coord:{nom:"Coordinación de grado / nivel",intro:"El puente entre dirección y maestros del nivel.",
+    botones:[["junta_nivel","Convocatoria de junta de nivel"],["cobertura","Cuadro de coberturas de hoy"],["padre_nivel","Circular corta a padres del nivel"],["acuerdo","Acuerdos de la reunión de grado"]]},
+  extra:{nom:"Extraescolares / deportes",intro:"Listas, permisos, salidas. No redes del alumno.",
+    botones:[["lista","Lista de asistencia del taller"],["salida","Permiso de salida / partido"],["aviso_extra","Aviso: se cancela o se cambia horario"],["uniforme","Recado de uniforme o material"]]},
+  bib:{nom:"Biblioteca / mediación",intro:"Préstamos y morosos. Tono serio, corto.",
+    botones:[["prestamo","Recordatorio de libro vencido"],["inventario","Conteo rápido de anaquel"],["horario","Horario de biblioteca para circular"]]},
+  enf:{nom:"Enfermería (solo recados)",intro:"NO diagnostica. Solo aviso al tutor y bitácora de lo que YA pasó.",
+    botones:[["aviso_tutor","Aviso al tutor: pasó a enfermería"],["bitacora","Bitácora de atención (síntoma dicho + qué se hizo)"],["botiquin","Pedido de botiquín"],["regreso","Alumno puede / no puede volver a clase (según indicación ya dada)"]]},
+  caja:{nom:"Caja / tesorería escolar",intro:"Recibos y recordatorios de colegiatura. No el $99 de Enseñanza Digna.",
+    botones:[["recibo","Texto de recibo / ficha"],["recordatorio","Recordatorio de pago (respetuoso)"],["beca","Constancia de que hay trámite de beca en curso"],["corte","Nota de corte de caja del día"]]},
+  lab:{nom:"Laboratorio / cómputo",intro:"Equipos, pases, daños.",
+    botones:[["pase","Pase de uso de sala"],["dano_eq","Reporte de equipo dañado"],["lista_eq","Lista de asistencia a la sala"]]}
+};
+
+const DETALLE={
+  visita:"Pase: nombre del visitante, a quién busca, hora de entrada, identificación vista. Sin opinar.",
+  retiro:"Alumno, grado, quién lo recoge, hora, quién autorizó en dirección.",
+  proveedor:"Empresa, qué entrega, a quién avisar adentro, hora.",
+  cierre:"Hora de cierre, incidencias, llaves, quién releva.",
+  incidente:"Hecho, lugar, hora, quién estaba, a quién se avisó. Sin culpar.",
+  ronda:"Hora, zona, hallazgo, acción.",
+  simulacro:"Rol de seguridad en 8 líneas.",
+  extravio:"Qué, dónde, quién reporta, a quién se entregó.",
+  orden:"Zona, qué se necesita, ahora o al cierre.",
+  insumos:"Lista de 8 rubros con cantidad en blanco.",
+  dano:"Lugar, qué se rompió, riesgo (sí/no), foto la toma el humano.",
+  turno:"Qué quedó pendiente para el siguiente turno.",
+  falla:"Equipo/lugar, síntoma, desde cuándo, urgente sí/no.",
+  preventivo:"5 puntos de la semana (luces, chapas, fugas, techo, A/C).",
+  refaccion:"Pieza, medida si se sabe, quién autoriza compra.",
+  cierre_ot:"Orden X: qué se hizo, tiempo, pendiente.",
+  hecho:"Alumno(s), lugar, hora, hecho observable. No adjetivos. Para que dirección decida si sale aviso al padre.",
+  atraso:"Plantilla de lista: nombre, grado, minutos, puerta.",
+  recreo:"Hecho en patio. Testigos adultos. Sin expediente clínico.",
+  pase:"Alumno, hora de salida del aula, destino, hora de regreso.",
+  junta_nivel:"Fecha, tema, 4 puntos, quién convoca.",
+  cobertura:"Grupo, maestro ausente, quién cubre, horario.",
+  padre_nivel:"Circular de 80 palabras a padres de ESE nivel.",
+  acuerdo:"3 acuerdos, responsables, fecha.",
+  lista:"Taller, fecha, presentes / faltas (nombres en blanco).",
+  salida:"Permiso: destino, hora, responsable adulto, qué firmar.",
+  aviso_extra:"Se cancela / cambia. Nueva hora. Quién avisa al padre.",
+  uniforme:"Qué falta y para cuándo.",
+  prestamo:"Libro, fecha de vencimiento, recado de 4 líneas.",
+  inventario:"Sección, conteo, faltantes.",
+  horario:"Texto para memo: días y horas de biblioteca.",
+  aviso_tutor:"Hora, qué refirió el alumno (sus palabras), qué se hizo (hielo, reposo, se llamó), quién debe recoger. SIN diagnóstico.",
+  bitacora:"Hora, nombre, grado, lo que dijo, lo que se aplicó ya autorizado, destino (clase / casa).",
+  botiquin:"Lista corta: gasas, telas, termómetro, etc. Cantidades en blanco.",
+  regreso:"Según lo que YA indicó el adulto responsable: vuelve a clase o espera tutor.",
+  recibo:"Concepto de COLEGIATURA del colegio (no el plan ED), monto, fecha, folio en blanco.",
+  recordatorio:"Tono respetuoso, fecha límite, dónde pagar.",
+  beca:"El trámite está en curso. No adelanta resolución.",
+  corte:"Efectivo / transferencia / pendientes del día.",
+  pase:"Grupo, hora, docente responsable.",
+  dano_eq:"Equipo, número, qué falló, quién lo usaba.",
+  lista_eq:"Sala, hora, grupo."
+};
+
+let estado={rol:"port",bot:"visita"};
+
+function home(){
+  document.getElementById("app").innerHTML=`
+  <div class="card">
+    <p class="muted">Dirección, secretaría, psicólogo y TS tienen su propia pantalla. Aquí es el resto del plantel.</p>
+    <div class="grid">
+      <button class="chip" onclick="setRol('port')">Portería</button>
+      <button class="chip" onclick="setRol('seg')">Seguridad</button>
+      <button class="chip" onclick="setRol('int')">Intendencia</button>
+      <button class="chip" onclick="setRol('man')">Mantenimiento</button>
+      <button class="chip" onclick="setRol('pre')">Prefectura</button>
+      <button class="chip" onclick="setRol('coord')">Coordinación</button>
+      <button class="chip" onclick="setRol('extra')">Extraescolares</button>
+      <button class="chip" onclick="setRol('bib')">Biblioteca</button>
+      <button class="chip" onclick="setRol('enf')">Enfermería</button>
+      <button class="chip" onclick="setRol('caja')">Caja</button>
+      <button class="chip" onclick="setRol('lab')">Lab / cómputo</button>
+    </div>
+  </div>`;
+}
+
+function setRol(r){
+  estado.rol=r;
+  const R=ROLES[r];
+  const b=R.botones.map(([id,n])=>`<button class="chip" onclick="estado.bot='${id}';setRol('${r}')">${n}</button>`).join("");
+  document.getElementById("app").innerHTML=`
+  <div class="card">
+    <button class="line" onclick="home()">← Otros puestos</button>
+    <h2>${R.nom}</h2>
+    <p class="muted">${R.intro}</p>
+    ${b}
+    <textarea id="extra" rows="3" placeholder="Datos de hoy: nombres, hora, lugar."></textarea>
+    <button class="btn" onclick="gen()">Armar recado</button>
+  </div><div id="out"></div>`;
+}
+
+function gen(){
+  const extra=(document.getElementById("extra")||{}).value||"";
+  const t=`${ROLES[estado.rol].nom}
+${DETALLE[estado.bot]}
+
+${extra?"Datos:\\n"+extra+"\\n":""}
+Colegio ________ · fecha ____ · hora ____
+Hecho / pedido:
+Siguiente paso:
+Quién avisa a dirección o al padre (si aplica):
+
+No es diagnóstico ni sanción final.
+Borrador. El responsable del área revisa.`;
+  document.getElementById("out").innerHTML=`<div class="card"><pre id="txt">${t.replace(/</g,"")}</pre>
+  <button class="gold" onclick="navigator.clipboard.writeText(document.getElementById('txt').innerText);alert('Copiado')">Copiar</button></div>`;
+}
+home();
+</script>
+</body>
+</html>
