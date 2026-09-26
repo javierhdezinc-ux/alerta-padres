@@ -1,0 +1,9 @@
+{
+  "name": "ensenanza-digna-p2-development",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "check": "node --check real-channel.js && npm test"
+  }
+}
