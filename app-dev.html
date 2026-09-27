@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0f3d75" />
+  <title>Enseñanza Digna · Desarrollo</title>
+  <style>
+    :root { --navy:#123a6f; --blue:#1b5aa8; --green:#2f6f4e; --ink:#1b2430; --line:#e4d9c8; }
+    * { box-sizing:border-box; }
+    html, body { height:100%; margin:0; background:#0b1220; font-family:system-ui,sans-serif; }
+    .shell { width:100%; max-width:430px; height:100dvh; margin:0 auto; position:relative; background:#f4efe6; }
+    iframe { width:100%; height:100%; border:0; display:block; }
+    .real-entry {
+      position:fixed; z-index:20; top:calc(10px + env(safe-area-inset-top)); left:50%; transform:translateX(-50%);
+      width:min(398px,calc(100% - 32px)); border:0; border-radius:999px; padding:11px 16px;
+      color:#fff; background:linear-gradient(#3e8a62,var(--green)); font-weight:800;
+      box-shadow:0 4px 0 #21553b,0 8px 18px rgba(0,0,0,.25); cursor:pointer;
+    }
+    .modal { position:fixed; inset:0; z-index:50; background:rgba(8,20,40,.78); display:flex; align-items:flex-end; justify-content:center; }
+    .modal.hide { display:none; }
+    .sheet { width:100%; max-width:430px; max-height:92dvh; overflow:auto; padding:20px 18px calc(28px + env(safe-area-inset-bottom)); background:#fff; color:var(--ink); border-radius:22px 22px 0 0; }
+    .btn { width:100%; border:0; border-radius:16px; padding:14px 16px; margin-top:10px; font:800 1rem system-ui,sans-serif; cursor:pointer; }
+    .blue { background:var(--blue); color:#fff; box-shadow:0 4px 0 var(--navy); }
+    .line { background:#fff; color:var(--ink); border:1.5px solid var(--line); box-shadow:0 3px 0 #d4c6b0; }
+    .card { padding:15px; margin:10px 0; border:1px solid #efe6d8; border-radius:18px; background:#fffcf7; }
+    .row { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+    .pill { border-radius:999px; padding:4px 9px; background:#efe6d8; color:var(--navy); font-size:.75rem; font-weight:800; }
+    .pill.ok { background:#dff3e7; color:var(--green); }
+    .k { letter-spacing:.16em; font-size:.68rem; }
+    .muted { color:#5b6573; line-height:1.45; }
+    .note { color:#5b6573; font-size:.8rem; line-height:1.4; }
+    input, textarea { width:100%; border:1.5px solid var(--line); border-radius:12px; padding:12px; margin:6px 0 10px; font:inherit; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.95.0/dist/umd/supabase.min.js" defer></script>
+  <script src="p2-config.js" defer></script>
+  <script src="real-channel.js" defer></script>
+</head>
+<body>
+  <div class="shell">
+    <iframe src="app.html" title="Aplicación Enseñanza Digna protegida"></iframe>
+    <button class="real-entry" type="button" onclick="window.EDReal.open()">CANAL REAL · DESARROLLO</button>
+  </div>
+</body>
+</html>
